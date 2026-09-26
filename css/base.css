@@ -1,0 +1,131 @@
+/* ================================================================
+   FMiuc — Android GPS konum değiştirici | v1.7 landing
+   css/base.css — reset, tokenlar, butonlar, arka plan, navigasyon
+   ================================================================ */
+
+/* ---------- reset ---------- */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul{list-style:none}
+svg{display:block}
+::selection{background:rgba(41,243,131,.28);color:#eafff3}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:8px}
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:#04060d}
+::-webkit-scrollbar-thumb{background:#151d36;border-radius:10px;border:3px solid #04060d}
+::-webkit-scrollbar-thumb:hover{background:#1e2a4d}
+section[id]{scroll-margin-top:86px}
+
+/* ---------- tokenlar ---------- */
+:root{
+--bg:#04060d;--bg-2:#070b16;--bg-3:#0a101f;
+--ink:#eef2ff;--muted:#9aa4c9;--muted-2:#5e6789;
+--acc:#29f383;--acc-ink:#03230f;--acc-soft:rgba(41,243,131,.12);
+--cyan:#19e5ff;--vio:#8b5cf6;--wa:#25d366;
+--line:rgba(255,255,255,.075);--line-2:rgba(255,255,255,.13);
+--card:rgba(255,255,255,.028);--card-2:rgba(255,255,255,.055);
+--grad:linear-gradient(92deg,#29f383,#19e5ff);
+--grad-wa:linear-gradient(92deg,#25d366,#29f383);
+--r-s:14px;--r-m:20px;--r-l:28px;--r-xl:36px;
+--sh:0 24px 70px -24px rgba(0,0,0,.6);
+--glow:0 0 46px rgba(41,243,131,.3);
+--fd:'Sora',sans-serif;
+--fm:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
+}
+
+/* ---------- yardımcılar ---------- */
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:clamp(20px,4.5vw,48px)}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font-family:var(--fm)}
+main{position:relative;z-index:2}
+section{position:relative;z-index:2;padding-block:clamp(72px,9vw,128px)}
+.sec-head{max-width:780px;margin:0 auto clamp(40px,6vw,64px);text-align:center}
+.sec-label{display:inline-flex;align-items:center;gap:12px;font-family:var(--fm);font-size:.66rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--acc);margin-bottom:16px}
+.sec-label::before,.sec-label::after{content:'';width:28px;height:1px;background:var(--acc);opacity:.65}
+.sec-title{font-family:var(--fd);font-weight:700;font-size:clamp(1.9rem,4.2vw,3rem);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;color:var(--ink)}
+.sec-desc{color:var(--muted);font-size:clamp(.98rem,1.6vw,1.08rem);line-height:1.75}
+
+/* ---------- svg sprite ---------- */
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ic-f{width:18px;height:18px;fill:currentColor;flex-shrink:0}
+
+/* ---------- butonlar ---------- */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 24px;border-radius:100px;font-weight:600;font-size:.93rem;letter-spacing:.01em;white-space:nowrap;transition:transform .25s cubic-bezier(.2,.7,.3,1),box-shadow .25s,background-color .25s,border-color .25s;will-change:transform}
+.btn svg{width:18px;height:18px;flex-shrink:0}
+.btn-primary{background:var(--grad);color:var(--acc-ink);box-shadow:0 10px 32px -10px rgba(41,243,131,.6),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 44px -10px rgba(41,243,131,.75)}
+.btn-ghost{background:rgba(255,255,255,.045);border:1px solid var(--line-2);color:var(--ink);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.btn-ghost:hover{border-color:rgba(41,243,131,.45);background:rgba(41,243,131,.07);transform:translateY(-2px)}
+.btn-wa{background:var(--wa);color:#03230f;box-shadow:0 10px 32px -10px rgba(37,211,102,.6),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-wa:hover{transform:translateY(-2px)}
+.btn-wa svg{fill:#03230f}
+.btn-lg{padding:16px 30px;font-size:1.02rem}
+.btn-sm{padding:10px 18px;font-size:.85rem}
+.btn-block{width:100%}
+
+/* ---------- arka plan katmanları ---------- */
+#fx{position:fixed;inset:0;z-index:0;pointer-events:none}
+.grid-bg{position:fixed;inset:-2%;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(148,163,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,255,.05) 1px,transparent 1px);background-size:54px 54px;-webkit-mask-image:radial-gradient(ellipse 75% 62% at 50% 0%,#000 25%,transparent 100%);mask-image:radial-gradient(ellipse 75% 62% at 50% 0%,#000 25%,transparent 100%)}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:.6;will-change:transform}
+.orb-a{width:640px;height:640px;background:radial-gradient(circle,rgba(41,243,131,.17),transparent 65%);top:-230px;left:-190px;animation:orbA 26s ease-in-out infinite}
+.orb-b{width:540px;height:540px;background:radial-gradient(circle,rgba(25,229,255,.13),transparent 65%);bottom:-190px;right:-150px;animation:orbB 32s ease-in-out infinite}
+.orb-c{width:430px;height:430px;background:radial-gradient(circle,rgba(139,92,246,.15),transparent 65%);top:46%;left:58%;animation:orbC 24s ease-in-out infinite}
+.noise{position:fixed;inset:0;z-index:3;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.045'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+@keyframes orbA{0%,100%{transform:translate(0,0)}33%{transform:translate(70px,50px)}66%{transform:translate(-50px,90px)}}
+@keyframes orbB{0%,100%{transform:translate(0,0)}50%{transform:translate(-80px,-60px)}}
+@keyframes orbC{0%,100%{transform:translate(0,0)}50%{transform:translate(-90px,70px)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ---------- üst navigasyon ---------- */
+.nav{position:fixed;inset-inline:0;top:0;z-index:80;transition:background-color .3s,border-color .3s}
+.nav.scrolled{background:rgba(4,6,13,.74);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1180px;margin-inline:auto;padding:16px clamp(20px,4.5vw,48px);display:flex;align-items:center;gap:28px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--fd);font-weight:800;font-size:1.22rem;letter-spacing:-.02em;color:var(--ink)}
+.brand-dot{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(140deg,rgba(41,243,131,.22),rgba(25,229,255,.12));border:1px solid rgba(41,243,131,.4);box-shadow:0 0 24px rgba(41,243,131,.28)}
+.brand-dot svg{width:19px;height:19px;color:var(--acc)}
+.brand-ver{font-family:var(--fm);font-size:.6rem;font-weight:500;color:var(--acc);border:1px solid rgba(41,243,131,.4);padding:2px 8px;border-radius:100px;letter-spacing:.08em;transform:translateY(-5px)}
+.nav-links{display:flex;gap:26px;margin-left:auto;font-size:.92rem;color:var(--muted)}
+.nav-links a{transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{display:flex;align-items:center;gap:12px}
+.nav-wa{width:40px;height:40px;border-radius:12px;border:1px solid var(--line-2);display:grid;place-items:center;transition:border-color .25s,background-color .25s}
+.nav-wa svg{width:18px;height:18px;color:var(--wa);opacity:.75;transition:opacity .25s,transform .25s}
+.nav-wa:hover{border-color:rgba(37,211,102,.5);background:rgba(37,211,102,.08)}
+.nav-wa:hover svg{opacity:1;transform:scale(1.08)}
+.burger{display:none;width:42px;height:42px;border:1px solid var(--line-2);border-radius:12px;place-items:center}
+.burger i{display:block;width:18px;height:2px;background:var(--ink);position:relative;transition:background-color .2s}
+.burger i::before,.burger i::after{content:'';position:absolute;left:0;width:18px;height:2px;background:var(--ink);transition:transform .3s ease}
+.burger i::before{top:-6px}
+.burger i::after{top:6px}
+.burger.x i{background:transparent}
+.burger.x i::before{transform:translateY(6px) rotate(45deg)}
+.burger.x i::after{transform:translateY(-6px) rotate(-45deg)}
+
+/* ---------- mobil menü ---------- */
+.mob-menu{position:fixed;inset:0;z-index:75;background:rgba(3,5,11,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;opacity:0;pointer-events:none;transition:opacity .3s}
+.mob-menu.open{opacity:1;pointer-events:auto}
+.mob-menu a{font-family:var(--fd);font-size:1.55rem;font-weight:700;padding:10px;color:var(--muted);transition:color .2s}
+.mob-menu a:hover{color:var(--acc)}
+.mob-menu .m-dl{margin-top:20px;color:var(--acc-ink);background:var(--grad);border-radius:100px;padding:14px 36px;font-size:1.05rem;box-shadow:0 12px 34px -10px rgba(41,243,131,.6)}
+
+/* ---------- toast bildirimi ---------- */
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);z-index:200;display:flex;align-items:center;gap:10px;background:rgba(8,13,26,.92);border:1px solid rgba(41,243,131,.4);color:var(--ink);font-size:.86rem;padding:13px 20px;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 20px 50px -12px rgba(0,0,0,.7),0 0 30px rgba(41,243,131,.12);opacity:0;pointer-events:none;transition:opacity .35s,transform .45s cubic-bezier(.22,1,.36,1);max-width:calc(100vw - 40px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast i{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex-shrink:0}
+
+/* ---------- WhatsApp yüzen buton ---------- */
+.wa-fab{position:fixed;right:22px;bottom:22px;z-index:90;width:58px;height:58px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 14px 40px -8px rgba(37,211,102,.65);transition:transform .25s;animation:fabIn .8s .6s backwards}
+.wa-fab svg{width:28px;height:28px;color:#fff}
+.wa-fab:hover{transform:scale(1.1)}
+.wa-fab::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(37,211,102,.5);animation:fabPulse 2.4s ease-out infinite}
+@keyframes fabPulse{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.5);opacity:0}}
+@keyframes fabIn{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ---------- kaydırma ile görünme ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);transition-delay:var(--d,0s)}
+.reveal.in{opacity:1;transform:none}
+html.no-js .reveal{opacity:1;transform:none}

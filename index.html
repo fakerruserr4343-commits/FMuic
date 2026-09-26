@@ -1,1260 +1,476 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="no-js">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FMiuc — Konum özgürlüğünün yeni standardı</title>
-  <meta name="description" content="FMiuc ile dijital konumunu saniyeler içinde yönet. iPhone ve Android üzerinde akıcı, güvenli ve zahmetsiz bir deneyim." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <style>
-    /* ===== RESET ===== */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg: #060612;
-      --bg2: #0a0a1a;
-      --bg3: #0e0e22;
-      --accent: #6c47ff;
-      --accent2: #8b6fff;
-      --accent3: #a78bff;
-      --cyan: #00d2ff;
-      --cyan2: #38bdf8;
-      --green: #00ff88;
-      --white: #f5f5ff;
-      --muted: #7878a0;
-      --muted2: #5a5a80;
-      --border: rgba(108,71,255,0.2);
-      --border2: rgba(255,255,255,0.06);
-      --card: rgba(255,255,255,0.035);
-      --card-hover: rgba(108,71,255,0.08);
-      --glow: 0 0 60px rgba(108,71,255,0.35);
-      --glow2: 0 0 100px rgba(108,71,255,0.2);
-      --r: 16px;
-      --r2: 24px;
-      --r3: 32px;
-    }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--white);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ===== ANIMATED GRID BG ===== */
-    .grid-bg {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(108,71,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(108,71,255,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
-    }
-
-    /* Floating orbs */
-    .orb {
-      position: fixed; border-radius: 50%; filter: blur(80px);
-      pointer-events: none; z-index: 0;
-    }
-    .orb1 { width: 600px; height: 600px; background: rgba(108,71,255,0.12); top: -200px; left: -200px; animation: orb-move1 20s ease-in-out infinite; }
-    .orb2 { width: 500px; height: 500px; background: rgba(0,210,255,0.07); bottom: -150px; right: -150px; animation: orb-move2 25s ease-in-out infinite; }
-    .orb3 { width: 400px; height: 400px; background: rgba(108,71,255,0.08); top: 40%; left: 60%; animation: orb-move3 18s ease-in-out infinite; }
-    @keyframes orb-move1 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(80px,60px)} 66%{transform:translate(-40px,100px)} }
-    @keyframes orb-move2 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-60px,-80px)} 66%{transform:translate(40px,-40px)} }
-    @keyframes orb-move3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-80px,60px)} }
-
-    /* ===== LAYOUT ===== */
-    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 2; }
-
-    /* ===== NAV ===== */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
-      padding: 20px 0;
-      background: rgba(6,6,18,0.7);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border-bottom: 1px solid var(--border2);
-      transition: padding .3s;
-    }
-    nav.scrolled { padding: 14px 0; }
-    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
-    .logo {
-      font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff 0%, var(--accent3) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      text-decoration: none;
-    }
-    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: .875rem; font-weight: 500; transition: color .2s; }
-    .nav-links a:hover { color: var(--white); }
-    .nav-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff; text-decoration: none;
-      padding: 10px 22px; border-radius: 100px;
-      font-size: .85rem; font-weight: 700;
-      box-shadow: var(--glow); transition: all .25s;
-    }
-    .nav-btn:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 0 80px rgba(108,71,255,.6); }
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
-    .hamburger span { width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: all .3s; }
-
-    /* ===== HERO ===== */
-    #hero {
-      min-height: 100vh; display: flex; align-items: center;
-      padding: 120px 0 80px; position: relative; overflow: hidden;
-    }
-    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-
-    /* badge */
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(108,71,255,.12); border: 1px solid rgba(108,71,255,.3);
-      border-radius: 100px; padding: 6px 16px;
-      font-size: .72rem; font-weight: 700; letter-spacing: 1.5px;
-      text-transform: uppercase; color: var(--accent3); margin-bottom: 28px;
-    }
-    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-    .hero-tag {
-      font-size: .7rem; letter-spacing: 2px; font-weight: 700;
-      text-transform: uppercase; color: var(--accent3);
-      display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
-    }
-    .hero-tag::before { content: ''; flex: 0 0 32px; height: 1px; background: var(--accent3); }
-
-    h1 {
-      font-size: clamp(2.8rem, 5vw, 4.8rem);
-      font-weight: 900; line-height: 1.05; letter-spacing: -2.5px;
-      margin-bottom: 8px;
-    }
-    h1 .small { font-size: clamp(1.8rem, 3.5vw, 3rem); display: block; color: var(--muted); font-weight: 300; letter-spacing: -1px; }
-
-    .hero-app-name {
-      font-size: clamp(3.5rem, 6.5vw, 6rem);
-      font-weight: 900; letter-spacing: -3px; line-height: 1;
-      background: linear-gradient(135deg, var(--white) 0%, var(--accent2) 50%, var(--cyan) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      margin-bottom: 24px; display: block;
-    }
-
-    .hero-desc {
-      font-size: 1.1rem; color: var(--muted); font-weight: 400;
-      line-height: 1.75; max-width: 460px; margin-bottom: 40px;
-    }
-    .hero-desc strong { color: var(--white); font-weight: 600; }
-
-    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 56px; }
-    .btn-main {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff; text-decoration: none;
-      padding: 16px 32px; border-radius: 100px;
-      font-size: 1rem; font-weight: 700;
-      box-shadow: var(--glow), 0 12px 40px rgba(108,71,255,.35);
-      transition: all .3s cubic-bezier(.175,.885,.32,1.275);
-      border: none; cursor: pointer;
-    }
-    .btn-main:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 0 80px rgba(108,71,255,.7), 0 20px 60px rgba(108,71,255,.4); }
-    .btn-main:active { transform: scale(.97); }
-    .btn-ghost {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: transparent; color: var(--white); text-decoration: none;
-      padding: 16px 28px; border-radius: 100px;
-      font-size: 1rem; font-weight: 600;
-      border: 1px solid var(--border2); transition: all .25s;
-      cursor: pointer;
-    }
-    .btn-ghost:hover { background: var(--card); border-color: var(--accent3); transform: translateY(-2px); }
-
-    .hero-pills { display: flex; gap: 10px; flex-wrap: wrap; }
-    .pill {
-      display: inline-flex; align-items: center; gap: 7px;
-      background: var(--card); border: 1px solid var(--border2);
-      border-radius: 100px; padding: 8px 16px;
-      font-size: .78rem; font-weight: 600; color: var(--muted);
-    }
-    .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
-
-    /* ===== PHONE MOCKUPS ===== */
-    .phones-wrap {
-      position: relative; display: flex;
-      justify-content: center; align-items: flex-end;
-      gap: 20px; padding: 20px 0 0;
-    }
-    .phone {
-      width: 220px; background: #0d0d20;
-      border-radius: 36px;
-      box-shadow: 0 0 0 1.5px rgba(255,255,255,.1), 0 0 0 3px rgba(0,0,0,.6), 0 30px 80px rgba(0,0,0,.8), var(--glow2);
-      overflow: hidden; position: relative;
-      flex-shrink: 0;
-    }
-    .phone.main { height: 430px; z-index: 2; animation: float-main 5s ease-in-out infinite; }
-    .phone.secondary { height: 390px; z-index: 1; opacity: .75; animation: float-sec 6s ease-in-out infinite; }
-    .phone.main { transform: perspective(800px) rotateY(-6deg) rotateX(2deg); }
-    .phone.secondary { transform: perspective(800px) rotateY(6deg) rotateX(2deg); }
-
-    @keyframes float-main { 0%,100%{transform:perspective(800px) rotateY(-6deg) rotateX(2deg) translateY(0)} 50%{transform:perspective(800px) rotateY(-8deg) rotateX(3deg) translateY(-14px)} }
-    @keyframes float-sec { 0%,100%{transform:perspective(800px) rotateY(6deg) rotateX(2deg) translateY(0)} 50%{transform:perspective(800px) rotateY(8deg) rotateX(3deg) translateY(-10px)} }
-
-    /* phone glass */
-    .phone::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 45%;
-      background: linear-gradient(180deg, rgba(255,255,255,.07) 0%, transparent);
-      border-radius: 36px 36px 0 0; z-index: 10; pointer-events: none;
-    }
-    .phone-notch {
-      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-      width: 90px; height: 22px; background: #000; border-radius: 100px; z-index: 11;
-    }
-    .phone-screen { padding: 44px 14px 14px; height: 100%; display: flex; flex-direction: column; gap: 10px; }
-    .ps-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 0 8px; }
-    .ps-brand { font-size: .7rem; font-weight: 700; color: rgba(255,255,255,.5); letter-spacing: 1px; }
-    .ps-status {
-      display: flex; align-items: center; gap: 5px;
-      font-size: .6rem; font-weight: 700; color: var(--green);
-      background: rgba(0,255,136,.1); border: 1px solid rgba(0,255,136,.25);
-      padding: 3px 8px; border-radius: 100px;
-    }
-    .ps-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 1.5s infinite; }
-
-    .ps-map {
-      flex: 1; border-radius: 12px; overflow: hidden; position: relative;
-      background: #0a1628;
-      background-image:
-        linear-gradient(rgba(108,71,255,.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(108,71,255,.06) 1px, transparent 1px);
-      background-size: 20px 20px;
-    }
-    .ps-map-pin {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 14px; height: 14px; border-radius: 50%;
-      background: var(--accent); box-shadow: 0 0 0 4px rgba(108,71,255,.3), 0 0 20px rgba(108,71,255,.6);
-      animation: pin-pulse 2s infinite;
-    }
-    @keyframes pin-pulse { 0%,100%{box-shadow:0 0 0 4px rgba(108,71,255,.3),0 0 20px rgba(108,71,255,.6)} 50%{box-shadow:0 0 0 8px rgba(108,71,255,.15),0 0 30px rgba(108,71,255,.8)} }
-
-    .ps-map-ring {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      border: 1px dashed rgba(108,71,255,.3); border-radius: 50%;
-      animation: ring-expand 3s linear infinite;
-    }
-    .ps-map-ring:nth-child(1) { width: 40px; height: 40px; }
-    .ps-map-ring:nth-child(2) { width: 70px; height: 70px; animation-delay: 1s; }
-    .ps-map-ring:nth-child(3) { width: 100px; height: 100px; animation-delay: 2s; }
-    @keyframes ring-expand { 0%{opacity:.8} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.1)} }
-
-    .ps-info {
-      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06);
-      border-radius: 12px; padding: 10px 12px;
-    }
-    .ps-info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .ps-info-label { font-size: .6rem; color: var(--muted); font-weight: 500; }
-    .ps-info-val { font-size: .65rem; font-weight: 700; color: var(--white); }
-    .ps-info-loc { font-size: .58rem; color: var(--muted2); }
-    .ps-info-acc {
-      display: flex; align-items: center; gap: 5px;
-      font-size: .58rem; color: var(--green); font-weight: 700;
-    }
-    .ps-info-acc::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
-
-    .ps-btn {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 10px; padding: 9px;
-      font-size: .65rem; font-weight: 700; color: #fff;
-    }
-
-    /* device label */
-    .device-label {
-      position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
-      font-size: .65rem; font-weight: 600; color: var(--muted2);
-      white-space: nowrap; letter-spacing: .5px; text-transform: uppercase;
-    }
-
-    /* glow lines under phones */
-    .phones-glow {
-      position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
-      width: 80%; height: 100px;
-      background: radial-gradient(ellipse at 50% 0%, rgba(108,71,255,.35) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    /* ===== SECTION COMMONS ===== */
-    section { position: relative; z-index: 2; }
-    .sec-label {
-      display: inline-block; font-size: .7rem; letter-spacing: 2px;
-      font-weight: 700; text-transform: uppercase; color: var(--accent3); margin-bottom: 12px;
-    }
-    .sec-title {
-      font-size: clamp(2rem, 3.8vw, 3rem); font-weight: 900;
-      letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 16px;
-    }
-    .sec-desc { font-size: 1rem; color: var(--muted); line-height: 1.75; max-width: 520px; }
-    .sec-head { text-align: center; margin-bottom: 64px; }
-    .sec-head .sec-desc { margin: 0 auto; }
-
-    /* gradient text helper */
-    .g1 { background: linear-gradient(135deg, var(--white), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .g2 { background: linear-gradient(135deg, var(--accent2), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-
-    /* ===== FEATURE BAR ===== */
-    .feat-bar {
-      border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2);
-      padding: 0; overflow: hidden; position: relative; z-index: 2;
-    }
-    .feat-bar-inner { display: flex; }
-    .feat-bar-item {
-      flex: 1; padding: 32px 28px;
-      border-right: 1px solid var(--border2);
-      display: flex; align-items: flex-start; gap: 16px;
-      transition: background .3s;
-    }
-    .feat-bar-item:last-child { border-right: none; }
-    .feat-bar-item:hover { background: var(--card-hover); }
-    .feat-bar-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; flex-shrink: 0;
-      background: rgba(108,71,255,.15); border: 1px solid rgba(108,71,255,.25);
-    }
-    .feat-bar-text strong { display: block; font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
-    .feat-bar-text span { font-size: .8rem; color: var(--muted); line-height: 1.5; }
-
-    /* ===== HOW IT WORKS ===== */
-    #how { padding: 120px 0; }
-    .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-
-    .steps { display: flex; flex-direction: column; gap: 0; }
-    .step-item {
-      display: flex; gap: 24px; padding: 28px 0;
-      border-bottom: 1px solid var(--border2); cursor: pointer;
-      transition: all .3s; position: relative;
-    }
-    .step-item:last-child { border-bottom: none; }
-    .step-item:hover .step-num { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
-    .step-item.active .step-num { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 0 30px rgba(108,71,255,.5); }
-
-    .step-num {
-      width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
-      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 800; color: var(--muted);
-      transition: all .3s; background: var(--card);
-    }
-    .step-content {}
-    .step-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
-    .step-desc { font-size: .88rem; color: var(--muted); line-height: 1.65; }
-
-    /* phone visual for how section */
-    .how-visual { position: relative; display: flex; justify-content: center; }
-    .how-phone {
-      width: 240px; height: 480px;
-      background: linear-gradient(160deg, #111128 0%, #0a0a1c 100%);
-      border-radius: 44px;
-      box-shadow: 0 0 0 1.5px rgba(255,255,255,.08), 0 0 0 3px #000, 0 40px 100px rgba(0,0,0,.9), var(--glow);
-      overflow: hidden; position: relative;
-      animation: float-main 5s ease-in-out infinite;
-    }
-    .how-phone::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
-      background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent);
-      border-radius: 44px 44px 0 0; z-index: 10; pointer-events: none;
-    }
-    .how-phone-notch {
-      position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
-      width: 100px; height: 24px; background: #000; border-radius: 100px; z-index: 11;
-    }
-    .how-screen { padding: 50px 16px 16px; height: 100%; display: flex; flex-direction: column; gap: 12px; }
-    .hs-top { display: flex; justify-content: space-between; align-items: center; }
-    .hs-logo { font-size: .8rem; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
-    .hs-badge {
-      font-size: .55rem; font-weight: 700; color: var(--green);
-      background: rgba(0,255,136,.1); border: 1px solid rgba(0,255,136,.2);
-      padding: 3px 8px; border-radius: 100px; display: flex; align-items: center; gap: 4px;
-    }
-    .hs-badge::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); animation: blink 1.5s infinite; }
-    .hs-map {
-      flex: 1; border-radius: 14px; background: #081020;
-      background-image: linear-gradient(rgba(108,71,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(108,71,255,.07) 1px, transparent 1px);
-      background-size: 18px 18px; position: relative; overflow: hidden;
-    }
-    .hs-map-center {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .hs-pin { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px rgba(108,71,255,.3), 0 0 25px rgba(108,71,255,.8); animation: pin-pulse 2s infinite; }
-    .hs-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(108,71,255,.3); animation: ring-expand 3s linear infinite; }
-    .hs-ring:nth-child(2) { width: 50px; height: 50px; }
-    .hs-ring:nth-child(3) { width: 90px; height: 90px; animation-delay: 1s; }
-    .hs-ring:nth-child(4) { width: 130px; height: 130px; animation-delay: 2s; }
-
-    .hs-card {
-      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
-      border-radius: 14px; padding: 12px 14px;
-    }
-    .hs-card-title { font-size: .62rem; color: var(--muted); margin-bottom: 4px; }
-    .hs-card-loc { font-size: .75rem; font-weight: 700; margin-bottom: 2px; }
-    .hs-card-coord { font-size: .58rem; color: var(--muted2); font-family: monospace; }
-    .hs-btn {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      background: linear-gradient(135deg, var(--accent), var(--cyan));
-      border-radius: 12px; padding: 10px;
-      font-size: .7rem; font-weight: 700; color: #fff;
-      box-shadow: 0 4px 20px rgba(108,71,255,.4);
-    }
-
-    /* ===== FEATURES GRID ===== */
-    #features { padding: 120px 0; }
-    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-    .feat-card {
-      background: var(--card); border: 1px solid var(--border2);
-      border-radius: var(--r2); padding: 32px 28px;
-      position: relative; overflow: hidden; transition: all .35s;
-    }
-    .feat-card::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(108,71,255,.05), transparent);
-      opacity: 0; transition: opacity .35s;
-    }
-    .feat-card:hover { transform: translateY(-6px); border-color: rgba(108,71,255,.4); box-shadow: 0 20px 60px rgba(108,71,255,.15); }
-    .feat-card:hover::after { opacity: 1; }
-    .feat-card.wide { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-    .feat-num { font-size: 3rem; font-weight: 900; color: rgba(255,255,255,.04); letter-spacing: -2px; line-height: 1; margin-bottom: 16px; }
-    .feat-icon-wrap {
-      width: 52px; height: 52px; border-radius: 14px; margin-bottom: 20px;
-      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
-    }
-    .fi-purple { background: rgba(108,71,255,.18); border: 1px solid rgba(108,71,255,.3); }
-    .fi-cyan   { background: rgba(0,210,255,.15);  border: 1px solid rgba(0,210,255,.25); }
-    .fi-green  { background: rgba(0,255,136,.12);  border: 1px solid rgba(0,255,136,.2); }
-    .fi-pink   { background: rgba(236,72,153,.15); border: 1px solid rgba(236,72,153,.25); }
-    .feat-card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
-    .feat-card-desc { font-size: .88rem; color: var(--muted); line-height: 1.65; }
-
-    /* ===== DOWNLOAD ===== */
-    #download { padding: 120px 0; }
-    .dl-wrap {
-      background: linear-gradient(135deg, rgba(108,71,255,.1), rgba(0,210,255,.05));
-      border: 1px solid rgba(108,71,255,.3);
-      border-radius: 40px; padding: 80px 60px;
-      text-align: center; position: relative; overflow: hidden;
-    }
-    .dl-wrap::before {
-      content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
-      width: 600px; height: 300px;
-      background: radial-gradient(ellipse, rgba(108,71,255,.2) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .dl-wrap > * { position: relative; z-index: 1; }
-
-    .dl-ver {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(108,71,255,.15); border: 1px solid rgba(108,71,255,.35);
-      border-radius: 100px; padding: 8px 20px; margin-bottom: 32px;
-      font-size: .75rem; font-weight: 700; color: var(--accent3); letter-spacing: 1px;
-    }
-    .dl-title { font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 900; letter-spacing: -2px; line-height: 1.1; margin-bottom: 16px; }
-    .dl-sub { font-size: 1rem; color: var(--muted); max-width: 460px; margin: 0 auto 44px; line-height: 1.7; }
-
-    /* Download platform buttons */
-    .dl-platforms { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
-    .dl-btn {
-      display: inline-flex; align-items: center; gap: 14px;
-      padding: 18px 36px; border-radius: 100px;
-      font-size: 1rem; font-weight: 700; text-decoration: none;
-      transition: all .3s; border: none; cursor: pointer;
-    }
-    .dl-btn.android {
-      background: linear-gradient(135deg, #00c851, #007e33);
-      color: #fff;
-      box-shadow: 0 8px 32px rgba(0,200,81,.3);
-    }
-    .dl-btn.android:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 0 60px rgba(0,200,81,.5), 0 20px 50px rgba(0,200,81,.3); }
-    .dl-btn.ios {
-      background: linear-gradient(135deg, #555, #222);
-      color: rgba(255,255,255,.5);
-      border: 1px solid rgba(255,255,255,.1);
-      cursor: not-allowed;
-    }
-    .dl-btn.ios .dl-btn-badge { font-size: .6rem; color: var(--muted2); display: block; font-weight: 400; }
-    .dl-btn-icon { font-size: 1.4rem; }
-    .dl-btn-text {}
-    .dl-btn-text .dl-btn-label { display: block; font-size: .7rem; font-weight: 500; opacity: .7; margin-bottom: 1px; }
-    .dl-btn-text .dl-btn-name { display: block; }
-
-    .dl-meta { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; }
-    .dl-meta-item { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--muted); }
-    .dl-meta-item svg { color: var(--accent3); }
-
-    /* ===== PRICING ===== */
-    #pricing { padding: 120px 0; }
-    .pricing-tabs {
-      display: flex; justify-content: center; gap: 8px; margin-bottom: 56px;
-    }
-    .ptab {
-      padding: 10px 28px; border-radius: 100px; font-size: .85rem; font-weight: 700;
-      cursor: pointer; transition: all .25s; border: 1px solid var(--border2);
-      background: transparent; color: var(--muted);
-    }
-    .ptab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border-color: transparent; box-shadow: var(--glow); }
-
-    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .price-card {
-      background: var(--card); border: 1px solid var(--border2);
-      border-radius: var(--r2); padding: 36px 28px;
-      position: relative; transition: all .35s;
-    }
-    .price-card:hover { transform: translateY(-6px); border-color: rgba(108,71,255,.4); }
-    .price-card.featured {
-      background: linear-gradient(160deg, rgba(108,71,255,.12), rgba(108,71,255,.05));
-      border-color: rgba(108,71,255,.5);
-      box-shadow: var(--glow);
-    }
-    .price-tag {
-      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff; font-size: .65rem; font-weight: 800;
-      padding: 5px 16px; border-radius: 100px; letter-spacing: .5px; white-space: nowrap;
-    }
-    .price-platform { font-size: .7rem; font-weight: 700; color: var(--accent3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
-    .price-period { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
-    .price-amount {
-      font-size: 2.8rem; font-weight: 900; letter-spacing: -2px; line-height: 1;
-      margin: 16px 0 8px;
-    }
-    .price-amount span { font-size: 1rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
-    .price-note { font-size: .78rem; color: var(--muted); margin-bottom: 28px; }
-    .price-divider { height: 1px; background: var(--border2); margin: 20px 0; }
-    .price-features { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 28px; }
-    .price-features li { display: flex; align-items: center; gap: 10px; font-size: .85rem; color: var(--muted); }
-    .price-features li::before { content: '✓'; color: var(--green); font-weight: 700; font-size: .9rem; flex-shrink: 0; }
-
-    .price-btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 14px; border-radius: 12px;
-      font-size: .9rem; font-weight: 700; cursor: pointer; text-decoration: none;
-      border: none; transition: all .25s;
-    }
-    .price-btn.primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff; box-shadow: 0 8px 30px rgba(108,71,255,.35);
-    }
-    .price-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(108,71,255,.5); }
-    .price-btn.ghost { background: var(--card); color: var(--white); border: 1px solid var(--border2); }
-    .price-btn.ghost:hover { background: var(--card-hover); border-color: rgba(108,71,255,.4); }
-
-    .wa-note {
-      text-align: center; margin-top: 32px;
-      font-size: .85rem; color: var(--muted);
-    }
-    .wa-note a { color: var(--accent3); text-decoration: none; font-weight: 600; }
-    .wa-note a:hover { color: var(--white); }
-
-    /* ===== FAQ ===== */
-    #faq { padding: 100px 0; }
-    .faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-    .faq-item {
-      background: var(--card); border: 1px solid var(--border2);
-      border-radius: var(--r); overflow: hidden; transition: border-color .2s;
-    }
-    .faq-item.open { border-color: rgba(108,71,255,.4); }
-    .faq-q {
-      padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;
-      cursor: pointer; font-size: .93rem; font-weight: 600; gap: 16px; user-select: none;
-    }
-    .faq-q:hover { color: var(--accent3); }
-    .faq-icon {
-      width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border2);
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      font-size: .7rem; transition: all .3s;
-    }
-    .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--accent); border-color: var(--accent); }
-    .faq-a {
-      max-height: 0; overflow: hidden; padding: 0 24px;
-      color: var(--muted); font-size: .88rem; line-height: 1.7;
-      transition: max-height .4s ease, padding .4s ease;
-    }
-    .faq-item.open .faq-a { max-height: 300px; padding: 0 24px 20px; }
-
-    /* ===== FOOTER ===== */
-    footer { border-top: 1px solid var(--border2); padding: 56px 0; }
-    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
-    .footer-logo { font-size: 1.4rem; font-weight: 800; background: linear-gradient(135deg, #fff, var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .footer-tagline { font-size: .8rem; color: var(--muted2); margin-top: 4px; }
-    .footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
-    .footer-links a { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
-    .footer-links a:hover { color: var(--white); }
-    .footer-copy { font-size: .8rem; color: var(--muted2); }
-
-    /* ===== SCROLL REVEAL ===== */
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    /* ===== MOBILE MENU ===== */
-    .mob-menu {
-      display: none; position: fixed; inset: 0; z-index: 998;
-      background: rgba(6,6,18,.97); backdrop-filter: blur(20px);
-      flex-direction: column; align-items: center; justify-content: center; gap: 36px;
-    }
-    .mob-menu.open { display: flex; }
-    .mob-menu a { color: var(--white); text-decoration: none; font-size: 1.5rem; font-weight: 700; transition: color .2s; }
-    .mob-menu a:hover { color: var(--accent3); }
-    .mob-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--muted); font-size: 1.6rem; cursor: pointer; }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 960px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 60px; }
-      .phones-wrap { order: -1; }
-      .how-grid { grid-template-columns: 1fr; }
-      .how-visual { display: none; }
-      .features-grid { grid-template-columns: 1fr; }
-      .feat-card.wide { grid-column: span 1; grid-template-columns: 1fr; }
-      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
-      .feat-bar-inner { flex-direction: column; }
-      .feat-bar-item { border-right: none; border-bottom: 1px solid var(--border2); }
-      .feat-bar-item:last-child { border-bottom: none; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      h1 { text-align: center; }
-      .hero-badge, .hero-tag { display: none; }
-      .hero-app-name { text-align: center; }
-      .hero-desc { text-align: center; max-width: 100%; }
-      .hero-btns { justify-content: center; }
-      .hero-pills { justify-content: center; }
-      .dl-wrap { padding: 52px 28px; }
-    }
-    @media (max-width: 600px) {
-      .dl-platforms { flex-direction: column; align-items: center; }
-      .dl-btn { width: 100%; max-width: 320px; justify-content: center; }
-      .dl-meta { gap: 16px; }
-      .footer-inner { flex-direction: column; text-align: center; }
-      .footer-links { justify-content: center; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FMiuc — Android'ini İstediğin Yere Taşı | GPS Konum Değiştirici</title>
+<meta name="description" content="FMiuc ile Android konumunu saniyeler içinde değiştir. Işınlanma, gerçek rotalar, joystick modu, zamanlanmış hareket. Root yok, PC yok. Ücretsiz indir.">
+<meta name="theme-color" content="#04060d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FMiuc — Android'ini İstediğin Yere Taşı">
+<meta property="og:description" content="Telefonundaki her uygulama yeni konumunu takip eder. Root yok, PC yok. Sadece Android.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/hero.css">
+<link rel="stylesheet" href="css/sections.css">
+<script>document.documentElement.classList.replace('no-js','js')</script>
 </head>
 <body>
+<svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+<symbol id="i-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H15"/></symbol>
+<symbol id="i-joy" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="13" rx="6.5"/><path d="M6.5 13.5h4M8.5 11.5v4"/><circle cx="16" cy="12.5" r=".9"/><circle cx="18.6" cy="15" r=".9"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.2 14"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+<symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.64-6.36L3 8"/><path d="M3 3v5h5"/></symbol>
+<symbol id="i-cross" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></symbol>
+<symbol id="i-android" viewBox="0 0 24 24"><path d="M8.5 3 10 5.5M15.5 3 14 5.5"/><path d="M7 5.5a5 5 0 0 1 10 0"/><rect x="5.5" y="5.5" width="13" height="13" rx="3"/><path d="M9.5 9.5h.01M14.5 9.5h.01"/><path d="M10 12.5v3M14 12.5v3"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10.5 18.5h3"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-rocket" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91 0z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
+<symbol id="i-inf" viewBox="0 0 24 24"><path d="M12 12c-2-2.33-4-3.5-6-3.5a3.5 3.5 0 0 0 0 7c2 0 4-1.17 6-3.5z"/><path d="M12 12c2 2.33 4 3.5 6 3.5a3.5 3.5 0 0 0 0-7c-2 0-4 1.17-6 3.5z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-wa" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413"/></symbol>
+</svg>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="orb orb-a" aria-hidden="true"></div>
+<div class="orb orb-b" aria-hidden="true"></div>
+<div class="orb orb-c" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
 
-<!-- BG -->
-<div class="grid-bg"></div>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
-
-<!-- MOBILE MENU -->
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="FMiuc ana sayfa">
+      <span class="brand-dot"><svg class="ic" viewBox="0 0 24 24"><use href="#i-pin"/></svg></span>
+      FMiuc<span class="brand-ver">v1.7</span>
+    </a>
+    <nav class="nav-links" aria-label="Site menüsü">
+      <a href="#features">Özellikler</a>
+      <a href="#demo">Dene</a>
+      <a href="#how">Nasıl Çalışır</a>
+      <a href="#pricing">Üyelik</a>
+      <a href="#faq">SSS</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="nav-wa" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc hakkında bilgi almak istiyorum." aria-label="WhatsApp destek"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg></a>
+      <a class="btn btn-sm btn-primary dl-track" href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk" download="FMiuc-v1.7.apk" target="_blank" rel="noopener">⬇ İndir</a>
+      <button class="burger" id="burger" aria-label="Menüyü aç/kapat" aria-expanded="false"><i></i></button>
+    </div>
+  </div>
+</header>
 <div class="mob-menu" id="mobMenu">
-  <button class="mob-close" onclick="closeMob()">✕</button>
-  <a href="#how"      onclick="closeMob()">Nasıl Çalışır</a>
-  <a href="#features" onclick="closeMob()">Özellikler</a>
-  <a href="#pricing"  onclick="closeMob()">Planlar</a>
-  <a href="#faq"      onclick="closeMob()">SSS</a>
-  <a href="#download" onclick="closeMob()" style="color:var(--accent3)">⬇ İndir</a>
+  <a href="#features">Özellikler</a>
+  <a href="#demo">Dene</a>
+  <a href="#how">Nasıl Çalışır</a>
+  <a href="#pricing">Üyelik</a>
+  <a href="#faq">SSS</a>
+  <a class="m-dl" href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk" download="FMiuc-v1.7.apk" target="_blank" rel="noopener">⬇ APK'yı İndir</a>
 </div>
 
-<!-- NAV -->
-<nav id="nav">
-  <div class="wrap">
-    <div class="nav-inner">
-      <a href="#" class="logo">FMiuc</a>
-      <ul class="nav-links">
-        <li><a href="#how">Nasıl Çalışır</a></li>
-        <li><a href="#features">Özellikler</a></li>
-        <li><a href="#pricing">Planlar</a></li>
-        <li><a href="#faq">SSS</a></li>
-        <li><a href="#download" class="nav-btn">⬇ İndir</a></li>
-      </ul>
-      <div class="hamburger" onclick="openMob()"><span></span><span></span><span></span></div>
+<main>
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="pill reveal"><span class="pill-dot"></span>v1.7 güncel · sadece Android · root yok</div>
+      <h1 class="reveal" style="--d:.06s">Android'ini taşı.<br><span class="grad">Nereye istersen.</span></h1>
+      <p class="hero-sub reveal" style="--d:.12s">Telefonundaki her uygulama yeni konumunu takip eder. FMiuc ile konumunu saniyeler içinde değiştir — root yok, kablo yok, PC yok. Tek dokunuş, tam kontrol.</p>
+      <div class="hero-btns reveal" style="--d:.18s">
+        <a class="btn btn-primary btn-lg dl-track" href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk" download="FMiuc-v1.7.apk" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24"><use href="#i-dl"/></svg>APK'yı Ücretsiz İndir</a>
+        <a class="btn btn-ghost btn-lg" href="#pricing">Üyelik Planları</a>
+      </div>
+      <div class="hero-meta reveal" style="--d:.24s"><span>Android 10+</span><span>3,4 MB</span><span>~2 dk kurulum</span><span>%100 Türkçe</span></div>
+      <div class="hero-stats reveal" style="--d:.3s">
+        <div class="stat"><b><span data-count="15000" data-suffix="+">0</span></b><span>İndirme</span></div>
+        <div class="stat"><b><span data-count="49" data-dec="1">0</span></b><span>Kullanıcı puanı</span></div>
+        <div class="stat"><b>7/24</b><span>WhatsApp desteği</span></div>
+      </div>
+    </div>
+    <div class="hero-visual reveal" style="--d:.15s">
+      <div class="phone-scene" id="phoneScene">
+        <div class="phone-glow" aria-hidden="true"></div>
+        <div class="phone-float">
+          <div class="phone" id="heroPhone">
+            <div class="p-cam" aria-hidden="true"></div>
+            <div class="p-screen">
+              <div class="p-status">
+                <span id="pClock">09:41</span>
+                <span class="p-icons" aria-hidden="true">
+                  <svg viewBox="0 0 14 14"><rect x="1" y="8.5" width="2.6" height="4.5" rx="1" fill="currentColor"/><rect x="5.2" y="6" width="2.6" height="7" rx="1" fill="currentColor"/><rect x="9.4" y="3.5" width="2.6" height="9.5" rx="1" fill="currentColor"/></svg>
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.2 5.4a8.6 8.6 0 0 1 11.6 0"/><path d="M3.4 7.8a5.4 5.4 0 0 1 7.2 0"/><path d="M5.6 10.1a2.2 2.2 0 0 1 2.8 0"/></svg>
+                  <svg viewBox="0 0 16 14"><rect x="1" y="3.5" width="11.5" height="7.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="2.8" y="5.3" width="7.2" height="3.9" rx="1" fill="currentColor"/><path d="M13.8 5.8v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </span>
+              </div>
+              <div class="p-appbar">
+                <span class="p-logo"><svg class="ic" viewBox="0 0 24 24"><use href="#i-pin"/></svg>FMiuc</span>
+                <span class="p-live"><i class="p-live-dot"></i>AKTİF</span>
+              </div>
+              <div class="p-map">
+                <svg class="p-roads" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true">
+                  <path d="M-10 150 Q60 138 100 96 T210 62" stroke="rgba(148,163,255,.16)" stroke-width="5"/>
+                  <path d="M30 210 L52 130 Q64 88 118 66 L210 34" stroke="rgba(148,163,255,.13)" stroke-width="3.5"/>
+                  <path d="M-10 40 H210" stroke="rgba(148,163,255,.09)" stroke-width="2"/>
+                  <path d="M150 210 V-10" stroke="rgba(148,163,255,.09)" stroke-width="2"/>
+                  <circle cx="100" cy="96" r="13" stroke="rgba(148,163,255,.16)" stroke-width="4"/>
+                  <path class="p-route" d="M28 182 C64 160 54 120 92 96 S150 58 152 44"/>
+                </svg>
+                <span class="p-pinwrap"><span class="p-ring"></span><span class="p-ring r2"></span><span class="p-ring r3"></span><span class="p-pin"></span></span>
+                <span class="p-acc">HASSASİYET 3m</span>
+              </div>
+              <div class="p-card">
+                <span class="p-card-loc"><svg class="ic" viewBox="0 0 24 24"><use href="#i-pin"/></svg>Shibuya, Tokyo</span>
+                <span class="p-card-coord">35.6595° K, 139.7005° D</span>
+              </div>
+              <div class="p-controls">
+                <div class="p-joy"><span class="p-joy-nub"></span></div>
+                <div class="p-btns"><span class="p-btn go">Işınlan</span><span class="p-btn stop">Sıfırla</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chip-f chip-1" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><use href="#i-zap"/></svg>Işınlanma: 0,8 sn</div>
+        <div class="chip-f chip-2" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><use href="#i-joy"/></svg>Joystick: AÇIK</div>
+        <div class="chip-f chip-3" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><use href="#i-clock"/></svg>Rota: %72 tamamlandı</div>
+      </div>
     </div>
   </div>
-</nav>
-
-<!-- ======================== HERO ======================== -->
-<section id="hero">
-  <div class="wrap">
-    <div class="hero-inner">
-
-      <!-- TEXT -->
-      <div>
-        <div class="hero-badge">
-          <div class="hero-badge-dot"></div>
-          KURULUM KOLAY · ROOT YOK · JAILBREAK YOK
-        </div>
-        <div class="hero-tag">Konum özgürlüğünün yeni standardı</div>
-        <h1>Find Me If <span class="small">U Can</span></h1>
-        <span class="hero-app-name">FMiuc</span>
-        <p class="hero-desc">
-          FMiuc ile <strong>dijital konumunu saniyeler içinde yönet.</strong>
-          iPhone ve Android üzerinde akıcı, güvenli ve zahmetsiz bir deneyim.
-        </p>
-        <div class="hero-btns">
-          <a href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk"
-             class="btn-main" download="FMiuc-v1.7.apk">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            FMiuc'u İndir
-          </a>
-          <a href="#how" class="btn-ghost">
-            Nasıl çalışır
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg>
-          </a>
-        </div>
-        <div class="hero-pills">
-          <div class="pill"><div class="dot"></div>Aktif · Hassasiyet 3m</div>
-          <div class="pill">📍 Anlık Konum</div>
-          <div class="pill">🔒 Gizlilik Öncelikli</div>
-        </div>
-      </div>
-
-      <!-- PHONES -->
-      <div class="phones-wrap">
-        <!-- Samsung phone -->
-        <div class="phone secondary" style="margin-bottom:30px">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="ps-header">
-              <div class="ps-brand">SAMSUNG S24</div>
-              <div class="ps-status"><div class="ps-status-dot"></div>AKTİF</div>
-            </div>
-            <div class="ps-map">
-              <div class="ps-map-ring"></div>
-              <div class="ps-map-ring"></div>
-              <div class="ps-map-ring"></div>
-              <div class="ps-map-pin"></div>
-            </div>
-            <div class="ps-info">
-              <div class="ps-info-row">
-                <div class="ps-info-label">Mevcut konum</div>
-                <div class="ps-info-acc">Hassasiyet 3m</div>
-              </div>
-              <div class="ps-info-val">Shibuya, Tokyo</div>
-              <div class="ps-info-loc">40.6782° N · 73.9442° W</div>
-            </div>
-            <div class="ps-btn">📍 Yeni rota</div>
-          </div>
-          <div class="device-label">Samsung S24</div>
-        </div>
-
-        <!-- iPhone -->
-        <div class="phone main">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="ps-header">
-              <div class="ps-brand">IPHONE 15 PRO</div>
-              <div class="ps-status"><div class="ps-status-dot"></div>AKTİF</div>
-            </div>
-            <div class="ps-map">
-              <div class="ps-map-ring"></div>
-              <div class="ps-map-ring"></div>
-              <div class="ps-map-ring"></div>
-              <div class="ps-map-pin"></div>
-            </div>
-            <div class="ps-info">
-              <div class="ps-info-row">
-                <div class="ps-info-label">Mevcut konum</div>
-                <div class="ps-info-acc">Hassasiyet 3m</div>
-              </div>
-              <div class="ps-info-val">Brooklyn, New York</div>
-              <div class="ps-info-loc">40.6782° N · 73.9442° W</div>
-            </div>
-            <div class="ps-btn">📍 Yeni rota</div>
-          </div>
-          <div class="device-label">iPhone 15 Pro</div>
-        </div>
-
-        <div class="phones-glow"></div>
-      </div>
-
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <div class="tg"><span><i></i>Tokyo</span><span><i></i>Paris</span><span><i></i>New York</span><span><i></i>İstanbul</span><span><i></i>Londra</span><span><i></i>Dubai</span><span><i></i>Roma</span><span><i></i>Berlin</span></div>
+      <div class="tg"><span><i></i>Tokyo</span><span><i></i>Paris</span><span><i></i>New York</span><span><i></i>İstanbul</span><span><i></i>Londra</span><span><i></i>Dubai</span><span><i></i>Roma</span><span><i></i>Berlin</span></div>
     </div>
   </div>
 </section>
 
-<!-- FEATURE BAR -->
-<div class="feat-bar reveal" style="position:relative;z-index:2">
-  <div class="wrap">
-    <div class="feat-bar-inner">
-      <div class="feat-bar-item">
-        <div class="feat-bar-icon">⚡</div>
-        <div class="feat-bar-text">
-          <strong>Anında Konum</strong>
-          <span>Saniyeler içinde güncelle</span>
-        </div>
-      </div>
-      <div class="feat-bar-item">
-        <div class="feat-bar-icon">🔒</div>
-        <div class="feat-bar-text">
-          <strong>Gizlilik Odaklı</strong>
-          <span>Verin bizde kalmaz</span>
-        </div>
-      </div>
-      <div class="feat-bar-item">
-        <div class="feat-bar-icon">🗺️</div>
-        <div class="feat-bar-text">
-          <strong>Rota Simülasyonu</strong>
-          <span>Doğal hız ve duraklarla</span>
-        </div>
-      </div>
-      <div class="feat-bar-item">
-        <div class="feat-bar-icon">📱</div>
-        <div class="feat-bar-text">
-          <strong>İki Platform</strong>
-          <span>iPhone ve Android</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ======================== HOW IT WORKS ======================== -->
-<section id="how">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="sec-label">Nasıl Çalışır</div>
-      <h2 class="sec-title">TEK UYGULAMA.<br /><span class="g2">TAM KONTROL.</span></h2>
-      <p class="sec-desc">
-        Konumun, senin kuralların. Karmaşık kurulumları geride bırak.
-        FMiuc, güçlü konum araçlarını sade ve güven veren bir arayüzde bir araya getirir.
-      </p>
-    </div>
-
-    <div class="how-grid">
-      <div class="steps">
-        <div class="step-item active reveal">
-          <div class="step-num">01</div>
-          <div class="step-content">
-            <div class="step-title">Anında konum</div>
-            <div class="step-desc">Haritada bir nokta seç ve konumunu saniyeler içinde güncelle. Hiçbir teknik bilgiye gerek yok.</div>
-          </div>
-        </div>
-        <div class="step-item reveal">
-          <div class="step-num">02</div>
-          <div class="step-content">
-            <div class="step-title">Gizlilik odaklı</div>
-            <div class="step-desc">Kontrol sende kalır. İhtiyacın olmayan hiçbir veriyi istemeyiz. Sıfır log, sıfır izleme.</div>
-          </div>
-        </div>
-        <div class="step-item reveal">
-          <div class="step-num">03</div>
-          <div class="step-content">
-            <div class="step-title">Rota simülasyonu</div>
-            <div class="step-desc">Doğal hız ve duraklarla kişiselleştirilmiş rotalar oluştur. Gerçekçi hareket profilleri.</div>
-          </div>
-        </div>
-        <div class="step-item reveal">
-          <div class="step-num">04</div>
-          <div class="step-content">
-            <div class="step-title">İki platform</div>
-            <div class="step-desc">iPhone ve Samsung cihazlarında aynı rafine deneyimi yaşa. Tek hesap, tüm cihazlar.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="how-visual reveal">
-        <div class="how-phone">
-          <div class="how-phone-notch"></div>
-          <div class="how-screen">
-            <div class="hs-top">
-              <div class="hs-logo">FMiuc</div>
-              <div class="hs-badge">AKTİF</div>
-            </div>
-            <div class="hs-map">
-              <div class="hs-map-center">
-                <div class="hs-ring"></div>
-                <div class="hs-ring"></div>
-                <div class="hs-ring"></div>
-                <div class="hs-pin"></div>
-              </div>
-            </div>
-            <div class="hs-card">
-              <div class="hs-card-title">Mevcut konum</div>
-              <div class="hs-card-loc">Brooklyn, New York</div>
-              <div class="hs-card-coord">40.6782° N · 73.9442° W</div>
-            </div>
-            <div class="hs-btn">
-              <span>📍</span> Konumu Güncelle
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================== FEATURES ======================== -->
+<!-- ÖZELLİKLER -->
 <section id="features">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="sec-label">Özellikler</div>
-      <h2 class="sec-title">Konum sınırlarını <span class="g1">kaldır.</span></h2>
-      <p class="sec-desc">Bilgisayarı geride bırak. Kontrolü yanında taşı. Güç, her zaman cebinde.</p>
+      <div class="sec-label">Yaptığı her şey</div>
+      <h2 class="sec-title">Tek uygulama. <span class="grad">Tam kontrol.</span></h2>
+      <p class="sec-desc">Kanepeden tek dokunuşla dünyayı gez — ya da planını kur ve kendi kendine hareket etsin. FMiuc, güçlü konum araçlarını sade bir arayüzde toplar.</p>
     </div>
-
-    <div class="features-grid">
-      <div class="feat-card reveal">
-        <div class="feat-num">01</div>
-        <div class="feat-icon-wrap fi-purple">⚡</div>
-        <div class="feat-card-title">Saniyeler İçinde Konum</div>
-        <div class="feat-card-desc">Haritadan bir nokta seç, tek dokunuşla konumunu güncelle. Gecikme yok, karmaşıklık yok.</div>
+    <div class="bento">
+      <div class="f-card tilt reveal">
+        <div class="f-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-zap"/></svg></div>
+        <h3>Işınlanma</h3>
+        <p>Adres yaz ya da haritaya dokun. Telefonundaki her uygulama yeni konumu saniyeler içinde okur.</p>
       </div>
-      <div class="feat-card reveal">
-        <div class="feat-num">02</div>
-        <div class="feat-icon-wrap fi-cyan">🔒</div>
-        <div class="feat-card-title">Tam Gizlilik</div>
-        <div class="feat-card-desc">Verin bizde kalmaz. Sıfır log, sıfır takip. Kontrol tamamen sende kalır.</div>
+      <div class="f-card tilt reveal" style="--d:.06s">
+        <div class="f-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-route"/></svg></div>
+        <h3>Gerçek Rotalar</h3>
+        <p>Başlangıç, varış ve hız seç. Telefonun gerçek yollarda, doğal duraklarla ilerler.</p>
+        <svg class="f-visual" viewBox="0 0 220 56" fill="none" aria-hidden="true">
+          <path class="f-route" d="M6 46 C44 46 50 16 82 16 S126 34 154 22 210 8 214 6"/>
+          <circle cx="6" cy="46" r="4" fill="#19e5ff"/>
+          <circle cx="214" cy="6" r="5" fill="#29f383"/>
+        </svg>
       </div>
-      <div class="feat-card reveal">
-        <div class="feat-num">03</div>
-        <div class="feat-icon-wrap fi-green">🗺️</div>
-        <div class="feat-card-title">Akıllı Rota Simülasyonu</div>
-        <div class="feat-card-desc">Gerçekçi hız profilleri, özelleştirilebilir duraklar ve doğal hareket simülasyonu.</div>
+      <div class="f-card tilt reveal" style="--d:.12s">
+        <div class="f-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-joy"/></svg></div>
+        <h3>Joystick Modu</h3>
+        <p>Başparmağınla yürü. Ayarladığın hızda, istediğin yönde hareket et — ekran kapalıyken bile.</p>
       </div>
-      <div class="feat-card reveal">
-        <div class="feat-num">04</div>
-        <div class="feat-icon-wrap fi-pink">📱</div>
-        <div class="feat-card-title">Evrensel Uyumluluk</div>
-        <div class="feat-card-desc">iPhone 15 Pro'dan Samsung S24'e, tüm modern cihazlarda kusursuz çalışır.</div>
+      <div class="f-card tilt reveal" style="--d:.18s">
+        <div class="f-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-clock"/></svg></div>
+        <h3>Zamanlanmış Hareket</h3>
+        <p>Bir hareketi kaydet, seçtiğin saatte kendiliğinden başlasın. Sabah 09:00'da ofiste olabilirsin.</p>
+      </div>
+      <div class="f-card tilt reveal" style="--d:.24s">
+        <div class="f-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-reset"/></svg></div>
+        <h3>Anında Sıfırla</h3>
+        <p>Tek dokunuşla gerçek GPS konumuna dön. Panic butonu her zaman tek dokunuş uzağında.</p>
+      </div>
+      <div class="f-card tilt reveal" style="--d:.3s">
+        <div class="f-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-cross"/></svg></div>
+        <h3>3m Hassasiyet</h3>
+        <p>Milimetrik konum ayarı. Koordinat girişiyle nokta atışı yer belirle, hassasiyeti kendin seç.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================== DOWNLOAD ======================== -->
+<!-- CANLI DEMO -->
+<section id="demo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">Canlı demo</div>
+      <h2 class="sec-title">Cihazına kurmadan <span class="grad">dene.</span></h2>
+      <p class="sec-desc">Aşağıdaki haritaya dokun — FMiuc nasıl çalışır, saniyeler içinde gör. Bu sadece bir önizleme; gerçek uygulama çok daha fazlasını yapar.</p>
+    </div>
+    <div class="demo-panel reveal">
+      <div class="demo-map" id="demoMap" role="application" aria-label="Konum seçmek için haritaya dokun">
+        <svg class="roads" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true">
+          <path d="M0 320 Q150 300 260 220 T600 140" stroke="rgba(148,163,255,.14)" stroke-width="7"/>
+          <path d="M80 400 L140 180 Q160 110 260 70 L420 -10" stroke="rgba(148,163,255,.11)" stroke-width="5"/>
+          <path d="M-20 120 H620" stroke="rgba(148,163,255,.08)" stroke-width="2.5"/>
+          <path d="M420 420 L430 60 Q434 30 470 10" stroke="rgba(148,163,255,.08)" stroke-width="2.5"/>
+          <path d="M-10 240 C120 250 200 210 330 236 S520 300 610 270" stroke="rgba(148,163,255,.07)" stroke-width="3"/>
+          <circle cx="260" cy="220" r="20" stroke="rgba(148,163,255,.12)" stroke-width="5"/>
+          <rect x="470" y="290" width="90" height="70" rx="14" stroke="rgba(41,243,131,.1)" stroke-width="2"/>
+        </svg>
+        <div class="demo-pulse" id="demoPulse" aria-hidden="true"></div>
+        <div class="demo-pin" id="demoPin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 22s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11z" fill="#29f383"/><circle cx="12" cy="11" r="3" fill="#04060d"/></svg></div>
+        <div class="demo-hint">Haritaya dokun — pin seninle gelsin</div>
+      </div>
+      <div class="demo-side">
+        <div class="demo-status"><i></i>YENİ KONUM AKTİF</div>
+        <h3>Canlı konum</h3>
+        <div class="demo-city" id="demoCity">Shibuya, Tokyo</div>
+        <div class="demo-coords" id="demoCoords">35.6595° K, 139.7005° D</div>
+        <div class="city-chips">
+          <button class="city-chip" data-city="tokyo" type="button">Tokyo</button>
+          <button class="city-chip" data-city="paris" type="button">Paris</button>
+          <button class="city-chip" data-city="newyork" type="button">New York</button>
+          <button class="city-chip" data-city="ist" type="button">İstanbul</button>
+          <button class="city-chip" data-city="dubai" type="button">Dubai</button>
+        </div>
+        <p class="demo-note">Uygulamada bu ekran çok daha güçlü: arama, koordinat girişi, kayıtlı konumlar, rotalar ve zamanlama. Hepsine v1.7'de erişiyorsun.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NASIL ÇALIŞIR -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">Nasıl çalışır</div>
+      <h2 class="sec-title">İki dakikada kur,<br><span class="grad">sonsuza dek kullan.</span></h2>
+      <p class="sec-desc">PC gerekmez, root gerekmez. FMiuc, Android'in kendi resmi "sahte konum" API'sini kullanır — tamamen resmi yöntem.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <span class="step-num">01</span>
+        <h3>APK'yı indir ve kur</h3>
+        <p>GitHub'daki resmi repodan APK'yı indir. Kurulum sırasında "Bilinmeyen kaynaklar" iznini onayla — tek seferlik, tamamen normal.</p>
+      </div>
+      <div class="step reveal" style="--d:.08s">
+        <span class="step-num">02</span>
+        <h3>Sahte konum iznini ver</h3>
+        <p>Android'in resmi yöntemi: geliştirici seçeneklerinden FMiuc'u sahte konum uygulaması olarak seç. Root yok, garanti etkilenmez.</p>
+        <span class="step-code">Ayarlar › Geliştirici seçenekleri › Sahte konum uygulaması</span>
+      </div>
+      <div class="step reveal" style="--d:.16s">
+        <span class="step-num">03</span>
+        <h3>Noktayı seç, başla</h3>
+        <p>Uygulamayı aç, haritadan yerini seç ve tek dokunuşla aktifleştir. Dilediğin an tek dokunuşla gerçek konumuna dön.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- İNDİRME -->
 <section id="download">
   <div class="wrap">
-    <div class="dl-wrap reveal">
-      <div class="dl-ver">✦ FMiuc v1.7 · Stable Release</div>
-
-      <h2 class="dl-title">UYGULAMAYI EDİN<br /><span class="g2">Kontrol, tüm cihazlarında.</span></h2>
-      <p class="dl-sub">
-        Android, iPhone ve PC indirme bağlantıları burada.
-        Hemen indir, saniyeler içinde kur.
-      </p>
-
-      <div class="dl-platforms">
-        <!-- ANDROID — aktif indirme -->
-        <a href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk"
-           class="dl-btn android" download="FMiuc-v1.7.apk">
-          <div class="dl-btn-icon">🤖</div>
-          <div class="dl-btn-text">
-            <span class="dl-btn-label">Android 10+</span>
-            <span class="dl-btn-name">Android İndir</span>
-          </div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </a>
-
-        <!-- iOS — yakında -->
-        <div class="dl-btn ios">
-          <div class="dl-btn-icon">🍎</div>
-          <div class="dl-btn-text">
-            <span class="dl-btn-label">iOS</span>
-            <span class="dl-btn-name">iPhone <span class="dl-btn-badge">Yakında gelecek</span></span>
+    <div class="sec-head reveal">
+      <div class="sec-label">İndirme</div>
+      <h2 class="sec-title">Uygulamayı <span class="grad">edin.</span></h2>
+      <p class="sec-desc">Sadece Android. Doğrudan GitHub repomuzdan — aracı yok, kısayol yok.</p>
+    </div>
+    <div class="dl-panel reveal">
+      <div class="dl-main">
+        <div class="dl-hero-row">
+          <span class="dl-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-android"/></svg></span>
+          <div>
+            <div class="dl-title">FMiuc v1.7</div>
+            <div class="dl-sub">Son sürüm · Android 10 ve üzeri</div>
           </div>
         </div>
-
-        <!-- PC — yakında -->
-        <div class="dl-btn ios">
-          <div class="dl-btn-icon">💻</div>
-          <div class="dl-btn-text">
-            <span class="dl-btn-label">Windows</span>
-            <span class="dl-btn-name">PC <span class="dl-btn-badge">Yakında gelecek</span></span>
-          </div>
+        <div class="spec-chips">
+          <span class="spec"><b>3,4 MB</b> APK boyutu</span>
+          <span class="spec"><b>Android 10+</b> destek</span>
+          <span class="spec"><b>%100</b> Türkçe</span>
+          <span class="spec"><b>GitHub</b> doğrudan indirme</span>
         </div>
+        <a class="dl-btn dl-track" href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk" download="FMiuc-v1.7.apk" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24"><use href="#i-dl"/></svg>APK'YI İNDİR</a>
+        <div class="dl-mirror">Yedek bağlantı: <a href="FMiuc-v1.7.apk" download="FMiuc-v1.7.apk">Netlify üzerinden indir</a></div>
+        <p class="dl-warn">Kurulum sırasında tarayıcı "bu dosya bilinmeyen bir kaynaktan geliyor" diyebilir — normaldir. Dosya doğrudan resmi GitHub repomuzdan gelir.</p>
       </div>
-
-      <div class="dl-meta">
-        <div class="dl-meta-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Güvenli & Virüssüz
+      <div class="dl-compat">
+        <h3>Uyumluluk</h3>
+        <div class="compat-row on">
+          <span class="compat-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-android"/></svg></span>
+          <div><div class="compat-name">Android</div><div class="compat-sub">10, 11, 12, 13, 14, 15, 16 — tüm markalar</div></div>
+          <span class="compat-state">Aktif</span>
         </div>
-        <div class="dl-meta-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-          Android 10+
+        <div class="compat-row off">
+          <span class="compat-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-phone"/></svg></span>
+          <div><div class="compat-name">iOS</div><div class="compat-sub">iPhone / iPad</div></div>
+          <span class="compat-state">Yakında</span>
         </div>
-        <div class="dl-meta-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Sadece 3.4 MB
+        <div class="compat-row off">
+          <span class="compat-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-monitor"/></svg></span>
+          <div><div class="compat-name">Windows</div><div class="compat-sub">PC / Laptop</div></div>
+          <span class="compat-state">Yakında</span>
         </div>
-        <div class="dl-meta-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          Root Gerektirmez
-        </div>
+        <p class="compat-note">iOS ve PC sürümleri şu an planımızda yok — tüm odak Android'de. Çıkarsa buradan duyurulur.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================== PRICING ======================== -->
+<!-- ÜYELİK PLANLARI -->
 <section id="pricing">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-label">Üyelik Planları</div>
-      <h2 class="sec-title">Sana uygun <span class="g1">süreyi seç.</span></h2>
-      <p class="sec-desc">Planını ve süreni belirle. Satın alma detaylarını WhatsApp üzerinden birlikte tamamlayalım.</p>
+      <h2 class="sec-title">Süreni seç. Gerisini <span class="grad">WhatsApp'ta hallederiz.</span></h2>
+      <p class="sec-desc">Plan butonuna bas — mesajın hazır olarak WhatsApp'a gitsin. Fiyat, ödeme ve aktivasyon tek sohbette.</p>
     </div>
-
-    <!-- Platform Tabs -->
-    <div class="pricing-tabs reveal">
-      <button class="ptab active" onclick="switchTab(this,'ios')">iOS</button>
-      <button class="ptab" onclick="switchTab(this,'android')">Android</button>
-    </div>
-
-    <!-- iOS plans -->
-    <div class="pricing-grid" id="plan-ios">
+    <div class="price-grid">
       <div class="price-card reveal">
-        <div class="price-platform">iOS</div>
-        <div class="price-period">1 Aylık</div>
-        <div class="price-amount">₺<span>Fiyat için</span></div>
-        <div class="price-note">WhatsApp'tan sor</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>Sınırsız konum değişimi</li>
-          <li>Rota simülasyonu</li>
-          <li>Teknik destek</li>
+        <span class="p-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-cal"/></svg></span>
+        <div class="plan-name">Haftalık</div>
+        <div class="plan-dur">7 gün erişim</div>
+        <div class="price-val"><span class="grad">WhatsApp'ta</span></div>
+        <div class="price-sub">Fiyat & aktivasyon: 1 mesaj uzağında</div>
+        <ul class="p-feats">
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Sınırsız konum değişimi</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Işınlanma + Joystick modu</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>7/24 WhatsApp desteği</li>
         </ul>
-        <a href="https://wa.me/?text=FMiuc%20iOS%201%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn ghost">
-          💬 WhatsApp'tan Sor
-        </a>
+        <a class="price-btn" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc HAFTALIK üyelik planını satın almak istiyorum. Fiyat ve aktivasyon bilgisi paylaşabilir misiniz?"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>WhatsApp'tan Satın Al</a>
       </div>
-      <div class="price-card featured reveal">
-        <div class="price-tag">⭐ En Popüler</div>
-        <div class="price-platform">iOS</div>
-        <div class="price-period">3 Aylık</div>
-        <div class="price-amount">₺<span>Fiyat için</span></div>
-        <div class="price-note">WhatsApp'tan sor</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>Sınırsız konum değişimi</li>
-          <li>Rota simülasyonu</li>
-          <li>Öncelikli destek</li>
-          <li>Yeni özellikler erken erişim</li>
+      <div class="price-card pop reveal" style="--d:.08s">
+        <span class="price-tag">⭐ En Popüler</span>
+        <span class="p-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-cal"/></svg></span>
+        <div class="plan-name">Aylık</div>
+        <div class="plan-dur">30 gün erişim</div>
+        <div class="price-val"><span class="grad">WhatsApp'ta</span></div>
+        <div class="price-sub">Fiyat & aktivasyon: 1 mesaj uzağında</div>
+        <ul class="p-feats">
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Haftalık planın tümü</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Gerçek rotalar + zamanlanmış hareket</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Öncelikli destek</li>
         </ul>
-        <a href="https://wa.me/?text=FMiuc%20iOS%203%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn primary">
-          💬 Hemen Başla
-        </a>
+        <a class="price-btn primary" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc AYLIK üyelik planını satın almak istiyorum. Fiyat ve aktivasyon bilgisi paylaşabilir misiniz?"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>Hemen Satın Al</a>
       </div>
-      <div class="price-card reveal">
-        <div class="price-platform">iOS</div>
-        <div class="price-period">6 Aylık</div>
-        <div class="price-amount">₺<span>Fiyat için</span></div>
-        <div class="price-note">WhatsApp'tan sor</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>Sınırsız konum değişimi</li>
-          <li>Rota simülasyonu</li>
-          <li>VIP destek hattı</li>
-          <li>Tüm özellikler dahil</li>
-          <li>Gelecek güncellemeler</li>
+      <div class="price-card reveal" style="--d:.16s">
+        <span class="price-tag alt">En Avantajlı</span>
+        <span class="p-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-rocket"/></svg></span>
+        <div class="plan-name">Yıllık</div>
+        <div class="plan-dur">365 gün erişim</div>
+        <div class="price-val"><span class="grad">WhatsApp'ta</span></div>
+        <div class="price-sub">Fiyat & aktivasyon: 1 mesaj uzağında</div>
+        <ul class="p-feats">
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Aylık planın tümü</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Erken erişim güncellemeleri</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Özel beta sürümleri</li>
         </ul>
-        <a href="https://wa.me/?text=FMiuc%20iOS%206%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn ghost">
-          💬 WhatsApp'tan Sor
-        </a>
+        <a class="price-btn" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc YILLIK üyelik planını satın almak istiyorum. Fiyat ve aktivasyon bilgisi paylaşabilir misiniz?"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>WhatsApp'tan Satın Al</a>
+      </div>
+      <div class="price-card vio reveal" style="--d:.24s">
+        <span class="p-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-inf"/></svg></span>
+        <div class="plan-name">Sonsuz</div>
+        <div class="plan-dur">Süresiz erişim</div>
+        <div class="price-val"><span class="grad">WhatsApp'ta</span></div>
+        <div class="price-sub">Tek seferlik · ömür boyu</div>
+        <ul class="p-feats">
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Yıllık planın tümü</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Ömür boyu güncelleme</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>Dilediğin cihaza kişisel lisans</li>
+        </ul>
+        <a class="price-btn vio" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc SONSUZ üyelik planını satın almak istiyorum. Fiyat ve aktivasyon bilgisi paylaşabilir misiniz?"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>WhatsApp'tan Satın Al</a>
       </div>
     </div>
-
-    <!-- Android plans -->
-    <div class="pricing-grid" id="plan-android" style="display:none">
-      <div class="price-card reveal">
-        <div class="price-platform">Android</div>
-        <div class="price-period">1 Aylık</div>
-        <div class="price-amount">₺<span>Fiyat için</span></div>
-        <div class="price-note">WhatsApp'tan sor</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>Sınırsız konum değişimi</li>
-          <li>Rota simülasyonu</li>
-          <li>Teknik destek</li>
-        </ul>
-        <a href="https://wa.me/?text=FMiuc%20Android%201%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn ghost">
-          💬 WhatsApp'tan Sor
-        </a>
-      </div>
-      <div class="price-card featured reveal">
-        <div class="price-tag">⭐ En Popüler</div>
-        <div class="price-platform">Android</div>
-        <div class="price-period">3 Aylık</div>
-        <div class="price-amount">₺<span>Fiyat için</span></div>
-        <div class="price-note">WhatsApp'tan sor</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>Sınırsız konum değişimi</li>
-          <li>Rota simülasyonu</li>
-          <li>Öncelikli destek</li>
-          <li>Yeni özellikler erken erişim</li>
-        </ul>
-        <a href="https://wa.me/?text=FMiuc%20Android%203%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn primary">
-          💬 Hemen Başla
-        </a>
-      </div>
-      <div class="price-card reveal">
-        <div class="price-platform">Android</div>
-        <div class="price-period">6 Aylık</div>
-        <div class="price-amount">₺<span>Fiyat için</span></div>
-        <div class="price-note">WhatsApp'tan sor</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>Sınırsız konum değişimi</li>
-          <li>Rota simülasyonu</li>
-          <li>VIP destek hattı</li>
-          <li>Tüm özellikler dahil</li>
-          <li>Gelecek güncellemeler</li>
-        </ul>
-        <a href="https://wa.me/?text=FMiuc%20Android%206%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn ghost">
-          💬 WhatsApp'tan Sor
-        </a>
-      </div>
-    </div>
-
-    <p class="wa-note reveal">
-      📩 Satın alma detayları için
-      <a href="https://wa.me/?text=FMiuc%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener">WhatsApp üzerinden</a>
-      iletişime geç. Hızlı yanıt garantisi.
-    </p>
+    <p class="wa-strip reveal">💬 Kararsız mısın? Planına karar vermeden önce <a href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc üyelik planları hakkında sorularım var.">bana yazabilirsin</a> — 7/24 yanıt.</p>
   </div>
 </section>
 
-<!-- ======================== HOW TO INSTALL ======================== -->
-<section style="padding:80px 0; position:relative;z-index:2;">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="sec-label">Kurulum</div>
-      <h2 class="sec-title">SADECE <span class="g2">ÜÇ ADIM</span></h2>
-      <p class="sec-desc">Kur. Seç. Hareket et.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:800px;margin:0 auto" class="steps-row">
-      <div class="price-card reveal" style="text-align:center;padding:36px 24px">
-        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;margin:0 auto 20px;box-shadow:var(--glow)">1</div>
-        <div class="feat-card-title" style="margin-bottom:8px">FMiuc'u bağla</div>
-        <div class="feat-card-desc">Telefonunu hızlı kurulum akışıyla hazırla.</div>
-      </div>
-      <div class="price-card reveal featured" style="text-align:center;padding:36px 24px">
-        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;margin:0 auto 20px;box-shadow:0 0 30px rgba(0,210,255,.4)">2</div>
-        <div class="feat-card-title" style="margin-bottom:8px">Noktayı seç</div>
-        <div class="feat-card-desc">Haritadan hedef konumunu veya rotanı belirle.</div>
-      </div>
-      <div class="price-card reveal" style="text-align:center;padding:36px 24px">
-        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;margin:0 auto 20px;box-shadow:var(--glow)">3</div>
-        <div class="feat-card-title" style="margin-bottom:8px">Kontrolü al</div>
-        <div class="feat-card-desc">Tek dokunuşla başlat, dilediğinde durdur.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================== FAQ ======================== -->
+<!-- SSS -->
 <section id="faq">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-label">SSS</div>
-      <h2 class="sec-title">Merak <span class="g1">edilenler.</span></h2>
+      <h2 class="sec-title">Aklına <span class="grad">takılanlar.</span></h2>
+      <p class="sec-desc">Aradığın cevap burada yoksa WhatsApp'tan sor — dakikalar içinde döneriz.</p>
     </div>
-    <div class="faq-list">
+    <div class="faq reveal">
       <div class="faq-item">
-        <div class="faq-q">Root veya Jailbreak gerekiyor mu? <div class="faq-icon">+</div></div>
-        <div class="faq-a">Hayır, kesinlikle gerekmiyor. FMiuc hem iOS hem Android'de root veya jailbreak olmadan çalışır.</div>
+        <button class="faq-q" aria-expanded="false">Root izni gerekiyor mu?<span class="faq-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-in"><p>Hayır. FMiuc, Android'in geliştirici seçeneklerindeki resmi "sahte konum bilgileri" API'sini kullanır. Cihazının garantisi ve sistem güncellemeleri hiçbir şekilde etkilenmez.</p></div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">Hangi cihazlarla uyumlu? <div class="faq-icon">+</div></div>
-        <div class="faq-a">Android 10 ve üzeri tüm cihazlarla uyumludur. iOS desteği yakında eklenecek. Samsung, Xiaomi, Huawei ve daha fazlası desteklenir.</div>
+        <button class="faq-q" aria-expanded="false">Uygulamalar sahte konumu fark edebilir mi?<span class="faq-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-in"><p>FMiuc resmi Android API'sini kullandığı için konum, sistem düzeyinde gerçek bir GPS sinyali gibi görünür. Haritalar, sosyal medya ve mesajlaşma uygulamaları yeni konumu tamamen normal şekilde okur.</p></div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">Konum değişikliğim tespit edilir mi? <div class="faq-icon">+</div></div>
-        <div class="faq-a">FMiuc, gerçekçi hareket profilleri ve doğal hız simülasyonu ile konumunun sahte görünmesini minimuma indirir. Ayrıntılar için destek ekibimizle iletişime geç.</div>
+        <button class="faq-q" aria-expanded="false">Hangi cihazlar destekleniyor?<span class="faq-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-in"><p>Android 10 ve üzeri tüm sürümler (10'dan 16'ya). Samsung, Xiaomi, Oppo, Pixel, Huawei ve tüm ana markalarla uyumludur.</p></div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">Ödeme nasıl yapılıyor? <div class="faq-icon">+</div></div>
-        <div class="faq-a">Tüm satın alma işlemleri WhatsApp üzerinden yürütülmektedir. Planını seç, mesaj at, birkaç dakika içinde aktifleştiriyoruz.</div>
+        <button class="faq-q" aria-expanded="false">Neden Play Store'da yok?<span class="faq-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-in"><p>Konum değiştirme uygulamaları Google Play politikaları gereği mağazada yayınlanamıyor. Bu yüzden APK'yı doğrudan resmi GitHub repomuzdan paylaşıyoruz — aracı yok, kısaltma yok.</p></div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">iOS desteği ne zaman gelecek? <div class="faq-icon">+</div></div>
-        <div class="faq-a">iOS versiyonu üzerinde aktif olarak çalışıyoruz. Mevcut iOS kullanıcıları için farklı çözümler sunuyoruz — WhatsApp'tan bilgi al.</div>
+        <button class="faq-q" aria-expanded="false">Verilerim güvende mi?<span class="faq-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-in"><p>Evet. FMiuc konum verilerini cihazından dışarı göndermez; hesap açmayı da gerektirmez. Kayıtlı konumların yalnızca senin telefonunda saklanır.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Nasıl satın alırım?<span class="faq-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-in"><p>Üyelik planlarından birine bas — WhatsApp mesajın hazır olarak açılır. Fiyat ve ödeme yöntemini orada konuşuyor, aktivasyonu birkaç dakika içinde tamamlıyoruz.</p></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================== FOOTER ======================== -->
-<footer>
+<!-- SON ÇAĞRI -->
+<section class="cta-final">
   <div class="wrap">
-    <div class="footer-inner">
+    <h2 class="cta-title reveal">İki dakika sonra,<br><span class="grad">istediğin yerde olabilirsin.</span></h2>
+    <p class="cta-sub reveal" style="--d:.08s">İndir, kur, konumunu seç. Gerisi bir dokunuş.</p>
+    <div class="cta-btns reveal" style="--d:.16s">
+      <a class="btn btn-primary btn-lg dl-track" href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk" download="FMiuc-v1.7.apk" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24"><use href="#i-dl"/></svg>APK'yı İndir</a>
+      <a class="btn btn-wa btn-lg" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc hakkında bilgi almak istiyorum."><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>WhatsApp'tan Yaz</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="foot-in">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top"><span class="brand-dot"><svg class="ic" viewBox="0 0 24 24"><use href="#i-pin"/></svg></span>FMiuc<span class="brand-ver">v1.7</span></a>
+        <p class="foot-tag">Konum özgürlüğü için tasarlandı. Sadece Android.</p>
+      </div>
       <div>
-        <div class="footer-logo">FMiuc</div>
-        <div class="footer-tagline">Find Me If U Can — Konum özgürlüğünün yeni standardı</div>
+        <div class="foot-h">Site</div>
+        <div class="foot-links">
+          <a href="#features">Özellikler</a>
+          <a href="#demo">Canlı demo</a>
+          <a href="#how">Nasıl çalışır</a>
+          <a href="#download">İndir</a>
+          <a href="#pricing">Üyelik</a>
+          <a href="#faq">SSS</a>
+        </div>
       </div>
-      <div class="footer-links">
-        <a href="#how">Nasıl Çalışır</a>
-        <a href="#features">Özellikler</a>
-        <a href="#pricing">Planlar</a>
-        <a href="#faq">SSS</a>
-        <a href="#download">İndir</a>
+      <div>
+        <div class="foot-h">İletişim</div>
+        <div class="foot-links">
+          <a href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc hakkında bilgi almak istiyorum."><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>WhatsApp: +994 70 850 25 10</a>
+          <a href="https://github.com/fakerruserr4343-commits/FMuic" target="_blank" rel="noopener">GitHub reposu</a>
+        </div>
       </div>
-      <div class="footer-copy">© 2026 FMiuc. Tüm haklar saklıdır.</div>
+    </div>
+    <p class="foot-disc">FMiuc'u yalnızca sahibi olduğun cihazlarda kullan. Konum değiştirme, bazı uygulamaların kullanım koşullarını ihlal edebilir — sorumluluk kullanıcıya aittir.</p>
+    <div class="foot-bottom">
+      <span class="foot-copy">© <span id="year">2026</span> FMiuc · v1.7 · Sadece Android</span>
+      <span class="foot-copy">Dünyanın her yerinden erişim — evinden ayrılmadan.</span>
     </div>
   </div>
 </footer>
 
-<!-- ======================== SCRIPTS ======================== -->
-<script>
-/* Nav scroll */
-window.addEventListener('scroll', () => {
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
-});
-
-/* Mobile menu */
-function openMob() { document.getElementById('mobMenu').classList.add('open'); document.body.style.overflow='hidden'; }
-function closeMob() { document.getElementById('mobMenu').classList.remove('open'); document.body.style.overflow=''; }
-
-/* Scroll reveal */
-const ro = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); ro.unobserve(e.target); } });
-}, { threshold: 0.08 });
-document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
-
-/* Step hover */
-document.querySelectorAll('.step-item').forEach(item => {
-  item.addEventListener('mouseenter', () => {
-    document.querySelectorAll('.step-item').forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
-  });
-});
-
-/* Pricing tabs */
-function switchTab(btn, tab) {
-  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('plan-ios').style.display = tab === 'ios' ? 'grid' : 'none';
-  document.getElementById('plan-android').style.display = tab === 'android' ? 'grid' : 'none';
-}
-
-/* FAQ */
-document.querySelectorAll('.faq-q').forEach(q => {
-  q.addEventListener('click', () => {
-    const item = q.parentElement;
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if(!isOpen) item.classList.add('open');
-  });
-});
-
-/* Download ripple */
-document.querySelectorAll('.btn-main, .dl-btn.android').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    const r = document.createElement('span');
-    const rect = this.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    r.style.cssText = `position:absolute;border-radius:50%;background:rgba(255,255,255,0.25);width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;transform:scale(0);animation:rpl .6s ease-out forwards;pointer-events:none;`;
-    this.style.position='relative'; this.style.overflow='hidden';
-    this.appendChild(r); setTimeout(()=>r.remove(), 700);
-  });
-});
-const s = document.createElement('style');
-s.textContent = '@keyframes rpl{to{transform:scale(3);opacity:0}}';
-document.head.appendChild(s);
-
-/* Steps responsive grid */
-if(window.innerWidth <= 600){
-  const grid = document.querySelector('.steps-row');
-  if(grid) grid.style.gridTemplateColumns = '1fr';
-}
-</script>
+<a class="wa-fab" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc hakkında bilgi almak istiyorum." aria-label="WhatsApp destek"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg></a>
+<div class="toast" id="toast" role="status"><i></i><span></span></div>
+<script src="js/main.js" defer></script>
 </body>
 </html>

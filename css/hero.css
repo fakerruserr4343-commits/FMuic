@@ -1,0 +1,92 @@
+/* ================================================================
+   css/hero.css — hero, 3D telefon, özellik kartları
+   ================================================================ */
+
+/* ---------- hero ---------- */
+.hero{padding-top:clamp(120px,16vh,170px);padding-bottom:0}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(30px,5vw,60px);align-items:center}
+.pill{display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);border:1px solid rgba(41,243,131,.3);background:var(--acc-soft);padding:8px 16px;border-radius:100px;margin-bottom:26px}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);animation:blink 2s infinite}
+h1{font-family:var(--fd);font-weight:800;font-size:clamp(2.4rem,5.8vw,4.2rem);line-height:1.06;letter-spacing:-.03em;margin-bottom:22px}
+.hero-sub{color:var(--muted);font-size:clamp(1rem,1.7vw,1.14rem);line-height:1.75;max-width:540px;margin-bottom:34px}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.hero-meta{font-family:var(--fm);font-size:.7rem;color:var(--muted-2);letter-spacing:.05em;display:flex;gap:16px;flex-wrap:wrap;margin-bottom:44px}
+.hero-meta span{position:relative;padding-left:14px}
+.hero-meta span::before{content:'';position:absolute;left:0;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:var(--acc);opacity:.8}
+.hero-stats{display:flex;gap:clamp(22px,3vw,40px);border-top:1px solid var(--line);padding-top:26px}
+.stat b{font-family:var(--fd);font-size:1.5rem;font-weight:700;letter-spacing:-.02em;display:block;line-height:1.1}
+.stat span{font-size:.78rem;color:var(--muted-2)}
+
+/* ---------- 3D telefon sahnesi ---------- */
+.hero-visual{position:relative;display:flex;justify-content:center}
+.phone-scene{perspective:1400px;position:relative}
+.phone-float{animation:floatY 6s ease-in-out infinite}
+.phone{width:min(300px,72vw);aspect-ratio:9/19.2;position:relative;border-radius:44px;background:linear-gradient(160deg,#10162e,#070a18 55%);border:1px solid rgba(255,255,255,.16);box-shadow:0 0 0 3px #03040a,0 42px 90px -18px rgba(0,0,0,.85),var(--glow);transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));will-change:transform}
+.p-cam{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:#02030a;border:2px solid #1b2440;z-index:9}
+.p-screen{position:absolute;inset:9px;border-radius:36px;background:#05070f;overflow:hidden;display:flex;flex-direction:column;padding:14px 12px 12px;gap:10px}
+.p-screen::before{content:'';position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.07) 0%,transparent 34%);pointer-events:none;z-index:8;border-radius:36px}
+.p-status{display:flex;justify-content:space-between;align-items:center;font-family:var(--fm);font-size:.58rem;color:var(--muted)}
+.p-status .p-icons{display:flex;gap:5px;align-items:center}
+.p-status svg{width:12px;height:12px}
+.p-appbar{display:flex;align-items:center;gap:8px}
+.p-logo{font-family:var(--fd);font-weight:700;font-size:.8rem;display:flex;align-items:center;gap:6px}
+.p-logo svg{width:12px;height:12px;color:var(--acc)}
+.p-live{margin-left:auto;display:flex;align-items:center;gap:5px;font-family:var(--fm);font-size:.52rem;color:var(--acc);border:1px solid rgba(41,243,131,.35);background:rgba(41,243,131,.08);padding:3px 8px;border-radius:100px}
+.p-live-dot{width:4px;height:4px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:blink 1.6s infinite}
+
+/* ---------- telefon: harita ve kontroller ---------- */
+.p-map{position:relative;flex:1;border-radius:18px;overflow:hidden;background:#060a17;background-image:linear-gradient(rgba(90,110,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(90,110,255,.06) 1px,transparent 1px);background-size:22px 22px}
+.p-roads{position:absolute;inset:0;width:100%;height:100%}
+.p-route{stroke:var(--acc);stroke-width:2.5;fill:none;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(41,243,131,.8));stroke-dasharray:8 14;animation:dashMove 3.2s linear infinite}
+.p-pinwrap{position:absolute;left:76%;top:22%}
+.p-pin{width:14px;height:14px;background:var(--acc);border:2px solid #eafff3;border-radius:50%;box-shadow:0 0 16px rgba(41,243,131,.9)}
+.p-ring{position:absolute;top:50%;left:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border:1px solid rgba(41,243,131,.5);border-radius:50%;animation:ringX 2.6s ease-out infinite}
+.p-ring.r2{animation-delay:.85s}
+.p-ring.r3{animation-delay:1.7s}
+.p-acc{position:absolute;left:10px;bottom:10px;font-family:var(--fm);font-size:.5rem;color:#bfe9ff;background:rgba(2,8,20,.72);border:1px solid var(--line);padding:3px 7px;border-radius:8px;backdrop-filter:blur(6px)}
+.p-card{background:rgba(255,255,255,.05);border:1px solid var(--line-2);border-radius:14px;padding:10px 12px;backdrop-filter:blur(8px)}
+.p-card-loc{font-size:.72rem;font-weight:600;display:flex;gap:6px;align-items:center}
+.p-card-loc svg{width:11px;height:11px;color:var(--acc)}
+.p-card-coord{font-family:var(--fm);font-size:.56rem;color:var(--cyan)}
+.p-controls{display:flex;align-items:center;gap:10px}
+.p-joy{position:relative;width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.09),rgba(255,255,255,.02));border:1px solid var(--line-2);flex-shrink:0}
+.p-joy::before{content:'';position:absolute;inset:15px;border-radius:50%;border:1px dashed rgba(41,243,131,.5)}
+.p-joy-nub{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--grad);left:50%;top:50%;margin:-9px 0 0 -9px;box-shadow:0 0 12px rgba(41,243,131,.7);animation:joyNub 5s ease-in-out infinite}
+.p-btns{display:flex;gap:8px;flex:1}
+.p-btn{flex:1;font-size:.62rem;font-weight:700;padding:9px 0;border-radius:10px;text-align:center;letter-spacing:.02em}
+.p-btn.go{background:var(--grad);color:var(--acc-ink)}
+.p-btn.stop{border:1px solid var(--line-2);color:var(--muted)}
+.phone-glow{position:absolute;left:50%;bottom:-40px;width:78%;height:110px;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(41,243,131,.28),transparent 70%);filter:blur(10px);z-index:-1}
+
+/* ---------- yüzen bilgi çipleri ---------- */
+.chip-f{position:absolute;display:flex;align-items:center;gap:8px;font-family:var(--fm);font-size:.6rem;color:var(--ink);background:rgba(10,16,32,.68);border:1px solid var(--line-2);padding:9px 13px;border-radius:100px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 34px -10px rgba(0,0,0,.6);white-space:nowrap;z-index:5;will-change:transform}
+.chip-f svg{width:13px;height:13px;color:var(--acc)}
+.chip-1{top:6%;right:-6%;animation:chipFloat 5.5s ease-in-out infinite}
+.chip-2{bottom:20%;left:-10%;animation:chipFloat 6.5s ease-in-out infinite .8s}
+.chip-3{top:44%;right:-12%;animation:chipFloat 7s ease-in-out infinite 1.6s}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes ringX{0%{transform:scale(1);opacity:.9}100%{transform:scale(4.2);opacity:0}}
+@keyframes dashMove{to{stroke-dashoffset:-88}}
+@keyframes joyNub{0%,100%{transform:translate(0,0)}25%{transform:translate(9px,-7px)}50%{transform:translate(2px,8px)}75%{transform:translate(-8px,2px)}}
+@keyframes chipFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+/* ---------- şehir şeridi ---------- */
+.ticker{position:relative;z-index:2;overflow:hidden;border-block:1px solid var(--line);padding:16px 0;margin-top:clamp(40px,7vw,80px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.ticker-track{display:flex;width:max-content;animation:tick 30s linear infinite}
+.tg{display:flex;gap:44px;padding-right:44px}
+.tg span{display:inline-flex;align-items:center;gap:22px;font-family:var(--fm);font-size:.72rem;letter-spacing:.3em;color:var(--muted-2);text-transform:uppercase;white-space:nowrap}
+.tg i{width:5px;height:5px;border-radius:50%;background:var(--acc);opacity:.7;flex-shrink:0}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ---------- özellik kartları (bento) ---------- */
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.f-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r-l);padding:30px 28px;overflow:hidden;transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .18s ease-out,border-color .3s,background-color .3s;transform-style:preserve-3d;will-change:transform}
+.f-card:hover{border-color:rgba(41,243,131,.35);background:rgba(41,243,131,.045)}
+.f-card::after{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(520px circle at var(--mx,50%) var(--my,50%),rgba(41,243,131,.09),transparent 45%);opacity:0;transition:opacity .3s;pointer-events:none}
+.f-card:hover::after{opacity:1}
+.f-ico{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;margin-bottom:20px;background:linear-gradient(150deg,rgba(41,243,131,.16),rgba(25,229,255,.08));border:1px solid rgba(41,243,131,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.f-ico svg{width:24px;height:24px;color:var(--acc)}
+.f-card h3{font-family:var(--fd);font-size:1.12rem;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+.f-card p{color:var(--muted);font-size:.9rem;line-height:1.7}
+.f-visual{margin-top:22px;width:100%}
+.f-route{stroke:rgba(41,243,131,.65);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-dasharray:6 10;animation:dashMove 2.8s linear infinite}
