@@ -3,1521 +3,1258 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FMiuc – Müzik & Medya APK</title>
-  <meta name="description" content="FMiuc v1.7 – Ücretsiz indir. Reklamsız müzik, gelişmiş özellikler, tam kontrol senin elinde." />
-
-  <!-- Fonts -->
+  <title>FMiuc — Konum özgürlüğünün yeni standardı</title>
+  <meta name="description" content="FMiuc ile dijital konumunu saniyeler içinde yönet. iPhone ve Android üzerinde akıcı, güvenli ve zahmetsiz bir deneyim." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    /* =========================================================
-       RESET & BASE
-    ========================================================= */
+    /* ===== RESET ===== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
-      --bg:         #050509;
-      --bg2:        #0c0c18;
-      --accent:     #7c3aed;
-      --accent2:    #a855f7;
-      --accent3:    #06b6d4;
-      --neon:       #c084fc;
-      --white:      #f0f0ff;
-      --muted:      #8b8baa;
-      --card:       rgba(255,255,255,0.04);
-      --border:     rgba(124,58,237,0.25);
-      --glow:       0 0 40px rgba(124,58,237,0.5);
-      --glow2:      0 0 60px rgba(168,85,247,0.3);
-      --radius:     20px;
-      --font:       'Space Grotesk', sans-serif;
+      --bg: #060612;
+      --bg2: #0a0a1a;
+      --bg3: #0e0e22;
+      --accent: #6c47ff;
+      --accent2: #8b6fff;
+      --accent3: #a78bff;
+      --cyan: #00d2ff;
+      --cyan2: #38bdf8;
+      --green: #00ff88;
+      --white: #f5f5ff;
+      --muted: #7878a0;
+      --muted2: #5a5a80;
+      --border: rgba(108,71,255,0.2);
+      --border2: rgba(255,255,255,0.06);
+      --card: rgba(255,255,255,0.035);
+      --card-hover: rgba(108,71,255,0.08);
+      --glow: 0 0 60px rgba(108,71,255,0.35);
+      --glow2: 0 0 100px rgba(108,71,255,0.2);
+      --r: 16px;
+      --r2: 24px;
+      --r3: 32px;
     }
-
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--bg);
       color: var(--white);
-      font-family: var(--font);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       overflow-x: hidden;
-      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* =========================================================
-       ANIMATED BACKGROUND
-    ========================================================= */
-    #bg-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
+    /* ===== ANIMATED GRID BG ===== */
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(108,71,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108,71,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
     }
 
-    /* =========================================================
-       NOISE OVERLAY
-    ========================================================= */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.4;
+    /* Floating orbs */
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px);
+      pointer-events: none; z-index: 0;
     }
+    .orb1 { width: 600px; height: 600px; background: rgba(108,71,255,0.12); top: -200px; left: -200px; animation: orb-move1 20s ease-in-out infinite; }
+    .orb2 { width: 500px; height: 500px; background: rgba(0,210,255,0.07); bottom: -150px; right: -150px; animation: orb-move2 25s ease-in-out infinite; }
+    .orb3 { width: 400px; height: 400px; background: rgba(108,71,255,0.08); top: 40%; left: 60%; animation: orb-move3 18s ease-in-out infinite; }
+    @keyframes orb-move1 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(80px,60px)} 66%{transform:translate(-40px,100px)} }
+    @keyframes orb-move2 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-60px,-80px)} 66%{transform:translate(40px,-40px)} }
+    @keyframes orb-move3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-80px,60px)} }
 
-    /* =========================================================
-       LAYOUT WRAPPER
-    ========================================================= */
-    .wrap {
-      position: relative;
-      z-index: 2;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
+    /* ===== LAYOUT ===== */
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 2; }
 
-    /* =========================================================
-       NAV
-    ========================================================= */
+    /* ===== NAV ===== */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 999;
-      padding: 18px 0;
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      background: rgba(5,5,9,0.75);
-      border-bottom: 1px solid var(--border);
-      transition: all 0.3s ease;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      padding: 20px 0;
+      background: rgba(6,6,18,0.7);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border2);
+      transition: padding .3s;
     }
-
-    nav .wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
+    nav.scrolled { padding: 14px 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
     .logo {
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, var(--accent2), var(--accent3));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .logo span {
-      background: linear-gradient(135deg, var(--white), var(--neon));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 32px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--muted);
+      font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent3) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: color 0.2s;
     }
-
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .875rem; font-weight: 500; transition: color .2s; }
     .nav-links a:hover { color: var(--white); }
-
-    .nav-cta {
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 8px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff !important;
-      padding: 10px 22px;
-      border-radius: 100px;
-      font-weight: 600 !important;
-      font-size: 0.85rem !important;
-      transition: transform 0.2s, box-shadow 0.2s !important;
-      box-shadow: var(--glow);
+      color: #fff; text-decoration: none;
+      padding: 10px 22px; border-radius: 100px;
+      font-size: .85rem; font-weight: 700;
+      box-shadow: var(--glow); transition: all .25s;
     }
+    .nav-btn:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 0 80px rgba(108,71,255,.6); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: all .3s; }
 
-    .nav-cta:hover {
-      transform: scale(1.05) !important;
-      color: #fff !important;
-      box-shadow: var(--glow2) !important;
-    }
-
-    /* Mobile nav toggle */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-    }
-    .hamburger span {
-      width: 24px; height: 2px;
-      background: var(--white);
-      border-radius: 2px;
-      transition: all 0.3s;
-    }
-
-    /* =========================================================
-       HERO
-    ========================================================= */
+    /* ===== HERO ===== */
     #hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 100px;
-      position: relative;
-      overflow: hidden;
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 120px 0 80px; position: relative; overflow: hidden;
     }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
 
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-      width: 100%;
+    /* badge */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(108,71,255,.12); border: 1px solid rgba(108,71,255,.3);
+      border-radius: 100px; padding: 6px 16px;
+      font-size: .72rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent3); margin-bottom: 28px;
     }
+    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    .hero-text { position: relative; }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(124,58,237,0.15);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 6px 16px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--accent2);
-      margin-bottom: 24px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+    .hero-tag {
+      font-size: .7rem; letter-spacing: 2px; font-weight: 700;
+      text-transform: uppercase; color: var(--accent3);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
     }
-
-    .badge-dot {
-      width: 7px; height: 7px;
-      background: var(--accent2);
-      border-radius: 50%;
-      animation: pulse-dot 2s infinite;
-    }
-
-    @keyframes pulse-dot {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
+    .hero-tag::before { content: ''; flex: 0 0 32px; height: 1px; background: var(--accent3); }
 
     h1 {
-      font-size: clamp(2.8rem, 5.5vw, 5rem);
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -2px;
-      margin-bottom: 20px;
-    }
-
-    h1 .grad {
-      background: linear-gradient(135deg, var(--neon) 0%, var(--accent3) 60%, var(--accent2) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      font-size: 1.15rem;
-      color: var(--muted);
-      font-weight: 400;
-      max-width: 480px;
-      margin-bottom: 40px;
-      line-height: 1.7;
-    }
-
-    .hero-sub strong { color: var(--white); font-weight: 600; }
-
-    .btn-group {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff;
-      text-decoration: none;
-      padding: 16px 32px;
-      border-radius: 100px;
-      font-size: 1rem;
-      font-weight: 700;
-      box-shadow: var(--glow), 0 8px 32px rgba(124,58,237,0.4);
-      transition: transform 0.25s cubic-bezier(.175,.885,.32,1.275), box-shadow 0.25s;
-      border: none;
-      cursor: pointer;
-      letter-spacing: -0.3px;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 0 60px rgba(168,85,247,0.7), 0 16px 48px rgba(124,58,237,0.5);
-    }
-
-    .btn-primary:active { transform: translateY(0) scale(0.98); }
-
-    .btn-primary svg { transition: transform 0.2s; }
-    .btn-primary:hover svg { transform: translateY(2px); }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--card);
-      color: var(--white);
-      text-decoration: none;
-      padding: 16px 28px;
-      border-radius: 100px;
-      font-size: 1rem;
-      font-weight: 600;
-      border: 1px solid var(--border);
-      transition: all 0.25s;
-      cursor: pointer;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(124,58,237,0.1);
-      border-color: var(--accent2);
-      transform: translateY(-2px);
-    }
-
-    .hero-stats {
-      display: flex;
-      gap: 32px;
-      margin-top: 48px;
-    }
-
-    .stat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-num {
-      font-size: 1.8rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--white), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -1px;
-    }
-
-    .stat-label {
-      font-size: 0.78rem;
-      color: var(--muted);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* =========================================================
-       3D PHONE MOCKUP
-    ========================================================= */
-    .phone-scene {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      perspective: 1000px;
-    }
-
-    .phone-float {
-      animation: phone-float 6s ease-in-out infinite;
-      transform-style: preserve-3d;
-    }
-
-    @keyframes phone-float {
-      0%,100% { transform: rotateY(-15deg) rotateX(5deg) translateY(0px); }
-      33%      { transform: rotateY(-8deg)  rotateX(3deg) translateY(-18px); }
-      66%      { transform: rotateY(-20deg) rotateX(7deg) translateY(-8px); }
-    }
-
-    .phone-shell {
-      width: 260px;
-      height: 520px;
-      background: linear-gradient(145deg, #1a1a2e, #16213e, #0f3460);
-      border-radius: 44px;
-      position: relative;
-      box-shadow:
-        0 0 0 2px rgba(124,58,237,0.4),
-        0 0 0 4px rgba(12,12,24,0.8),
-        0 40px 80px rgba(0,0,0,0.8),
-        0 0 80px rgba(124,58,237,0.25),
-        inset 0 1px 0 rgba(255,255,255,0.1);
-      overflow: hidden;
-    }
-
-    /* Glass shimmer */
-    .phone-shell::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 50%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
-      border-radius: 44px 44px 0 0;
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    /* Camera notch */
-    .phone-notch {
-      position: absolute;
-      top: 16px; left: 50%;
-      transform: translateX(-50%);
-      width: 100px; height: 26px;
-      background: #000;
-      border-radius: 100px;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .phone-cam {
-      width: 10px; height: 10px;
-      background: radial-gradient(circle at 40% 35%, #1e3a5f, #030303);
-      border-radius: 50%;
-      box-shadow: 0 0 4px rgba(6,182,212,0.6);
-    }
-
-    /* Screen */
-    .phone-screen {
-      position: absolute;
-      inset: 14px;
-      background: #070714;
-      border-radius: 32px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .screen-header {
-      padding: 56px 18px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .screen-app-icon {
-      width: 48px; height: 48px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
+      font-size: clamp(2.8rem, 5vw, 4.8rem);
+      font-weight: 900; line-height: 1.05; letter-spacing: -2.5px;
       margin-bottom: 8px;
-      box-shadow: 0 0 20px rgba(124,58,237,0.6);
+    }
+    h1 .small { font-size: clamp(1.8rem, 3.5vw, 3rem); display: block; color: var(--muted); font-weight: 300; letter-spacing: -1px; }
+
+    .hero-app-name {
+      font-size: clamp(3.5rem, 6.5vw, 6rem);
+      font-weight: 900; letter-spacing: -3px; line-height: 1;
+      background: linear-gradient(135deg, var(--white) 0%, var(--accent2) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 24px; display: block;
     }
 
-    .screen-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #fff;
+    .hero-desc {
+      font-size: 1.1rem; color: var(--muted); font-weight: 400;
+      line-height: 1.75; max-width: 460px; margin-bottom: 40px;
     }
+    .hero-desc strong { color: var(--white); font-weight: 600; }
 
-    .screen-sub {
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.4);
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 56px; }
+    .btn-main {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; text-decoration: none;
+      padding: 16px 32px; border-radius: 100px;
+      font-size: 1rem; font-weight: 700;
+      box-shadow: var(--glow), 0 12px 40px rgba(108,71,255,.35);
+      transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+      border: none; cursor: pointer;
     }
-
-    .screen-bars {
-      padding: 14px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex: 1;
-    }
-
-    .screen-bar {
-      height: 8px;
-      background: rgba(255,255,255,0.07);
-      border-radius: 100px;
-      overflow: hidden;
-    }
-
-    .screen-bar-fill {
-      height: 100%;
-      border-radius: 100px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
-      animation: bar-anim 3s ease-in-out infinite;
-    }
-
-    .screen-bar:nth-child(1) .screen-bar-fill { width: 80%; animation-delay: 0s; }
-    .screen-bar:nth-child(2) .screen-bar-fill { width: 60%; animation-delay: 0.3s; }
-    .screen-bar:nth-child(3) .screen-bar-fill { width: 90%; animation-delay: 0.6s; }
-    .screen-bar:nth-child(4) .screen-bar-fill { width: 45%; animation-delay: 0.9s; }
-
-    @keyframes bar-anim {
-      0%,100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .screen-player {
-      margin: 8px 18px;
-      padding: 14px;
-      background: rgba(124,58,237,0.15);
-      border: 1px solid rgba(124,58,237,0.3);
-      border-radius: 14px;
-    }
-
-    .screen-track { font-size: 0.72rem; color: #fff; font-weight: 600; margin-bottom: 8px; }
-    .screen-progress { height: 3px; background: rgba(255,255,255,0.1); border-radius: 100px; overflow: hidden; }
-    .screen-progress-fill {
-      height: 100%;
-      width: 45%;
-      background: linear-gradient(90deg, var(--accent2), var(--accent3));
-      border-radius: 100px;
-      animation: progress-anim 4s linear infinite;
-    }
-
-    @keyframes progress-anim {
-      0% { width: 10%; }
-      100% { width: 95%; }
-    }
-
-    .screen-controls {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 10px;
-      font-size: 1rem;
-    }
-
-    /* Glow orbs around phone */
-    .glow-orb {
-      position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
-      filter: blur(60px);
-    }
-
-    .orb1 {
-      width: 300px; height: 300px;
-      background: rgba(124,58,237,0.3);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      animation: orb-pulse 4s ease-in-out infinite;
-    }
-
-    .orb2 {
-      width: 200px; height: 200px;
-      background: rgba(6,182,212,0.2);
-      top: 20%; right: -20px;
-      animation: orb-pulse 5s ease-in-out infinite reverse;
-    }
-
-    @keyframes orb-pulse {
-      0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
-      50% { transform: translate(-50%,-50%) scale(1.2); opacity: 0.9; }
-    }
-
-    /* =========================================================
-       FEATURES SECTION
-    ========================================================= */
-    #features {
-      padding: 120px 0;
-      position: relative;
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 70px;
-    }
-
-    .section-label {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent2);
-      margin-bottom: 14px;
-    }
-
-    h2 {
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      font-weight: 800;
-      letter-spacing: -1.5px;
-      line-height: 1.1;
-      margin-bottom: 16px;
-    }
-
-    .section-desc {
-      color: var(--muted);
-      font-size: 1.05rem;
-      max-width: 520px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .feat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px 28px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.35s cubic-bezier(.175,.885,.32,1.275);
-      cursor: default;
-    }
-
-    .feat-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(124,58,237,0.06), transparent);
-      opacity: 0;
-      transition: opacity 0.35s;
-    }
-
-    .feat-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: var(--accent2);
-      box-shadow: 0 20px 60px rgba(124,58,237,0.2), var(--glow);
-    }
-
-    .feat-card:hover::before { opacity: 1; }
-
-    .feat-icon {
-      width: 54px; height: 54px;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .feat-icon.purple { background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.3); }
-    .feat-icon.cyan   { background: rgba(6,182,212,0.2);  border: 1px solid rgba(6,182,212,0.3);  }
-    .feat-icon.pink   { background: rgba(236,72,153,0.2); border: 1px solid rgba(236,72,153,0.3); }
-    .feat-icon.green  { background: rgba(34,197,94,0.2);  border: 1px solid rgba(34,197,94,0.3);  }
-    .feat-icon.orange { background: rgba(249,115,22,0.2); border: 1px solid rgba(249,115,22,0.3); }
-    .feat-icon.yellow { background: rgba(234,179,8,0.2);  border: 1px solid rgba(234,179,8,0.3);  }
-
-    .feat-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      position: relative; z-index: 1;
-    }
-
-    .feat-desc {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.65;
-      position: relative; z-index: 1;
-    }
-
-    /* =========================================================
-       DOWNLOAD SECTION
-    ========================================================= */
-    #download {
-      padding: 100px 0;
-      position: relative;
-    }
-
-    .download-card {
-      background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(168,85,247,0.08), rgba(6,182,212,0.06));
-      border: 1px solid rgba(124,58,237,0.35);
-      border-radius: 32px;
-      padding: 72px 60px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .download-card::before {
-      content: '';
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: conic-gradient(
-        from 0deg at 50% 50%,
-        transparent 0deg,
-        rgba(124,58,237,0.05) 60deg,
-        transparent 120deg,
-        rgba(6,182,212,0.05) 180deg,
-        transparent 240deg,
-        rgba(168,85,247,0.05) 300deg,
-        transparent 360deg
-      );
-      animation: rotate-bg 12s linear infinite;
-    }
-
-    @keyframes rotate-bg {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-
-    .download-card > * { position: relative; z-index: 1; }
-
-    .version-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(124,58,237,0.2);
-      border: 1px solid rgba(124,58,237,0.4);
-      border-radius: 100px;
-      padding: 8px 20px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--accent2);
-      margin-bottom: 28px;
-      letter-spacing: 0.5px;
-    }
-
-    .download-title {
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      margin-bottom: 16px;
-      line-height: 1.1;
-    }
-
-    .download-title .grad {
-      background: linear-gradient(135deg, var(--neon), var(--accent3));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .download-sub {
-      color: var(--muted);
-      font-size: 1rem;
-      max-width: 500px;
-      margin: 0 auto 40px;
-      line-height: 1.7;
-    }
-
-    .download-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
-      background-size: 200% 200%;
-      color: #fff;
-      text-decoration: none;
-      padding: 20px 48px;
-      border-radius: 100px;
-      font-size: 1.15rem;
-      font-weight: 800;
-      box-shadow:
-        0 0 0 0 rgba(124,58,237,0.4),
-        0 20px 60px rgba(124,58,237,0.5);
-      transition: all 0.3s;
-      animation: grad-shift 4s ease infinite, btn-pulse 2.5s ease-in-out infinite;
-      letter-spacing: -0.3px;
-      border: none;
+    .btn-main:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 0 80px rgba(108,71,255,.7), 0 20px 60px rgba(108,71,255,.4); }
+    .btn-main:active { transform: scale(.97); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: transparent; color: var(--white); text-decoration: none;
+      padding: 16px 28px; border-radius: 100px;
+      font-size: 1rem; font-weight: 600;
+      border: 1px solid var(--border2); transition: all .25s;
       cursor: pointer;
     }
+    .btn-ghost:hover { background: var(--card); border-color: var(--accent3); transform: translateY(-2px); }
 
-    @keyframes grad-shift {
-      0%,100% { background-position: 0% 50%; }
-      50%      { background-position: 100% 50%; }
+    .hero-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 100px; padding: 8px 16px;
+      font-size: .78rem; font-weight: 600; color: var(--muted);
+    }
+    .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+
+    /* ===== PHONE MOCKUPS ===== */
+    .phones-wrap {
+      position: relative; display: flex;
+      justify-content: center; align-items: flex-end;
+      gap: 20px; padding: 20px 0 0;
+    }
+    .phone {
+      width: 220px; background: #0d0d20;
+      border-radius: 36px;
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,.1), 0 0 0 3px rgba(0,0,0,.6), 0 30px 80px rgba(0,0,0,.8), var(--glow2);
+      overflow: hidden; position: relative;
+      flex-shrink: 0;
+    }
+    .phone.main { height: 430px; z-index: 2; animation: float-main 5s ease-in-out infinite; }
+    .phone.secondary { height: 390px; z-index: 1; opacity: .75; animation: float-sec 6s ease-in-out infinite; }
+    .phone.main { transform: perspective(800px) rotateY(-6deg) rotateX(2deg); }
+    .phone.secondary { transform: perspective(800px) rotateY(6deg) rotateX(2deg); }
+
+    @keyframes float-main { 0%,100%{transform:perspective(800px) rotateY(-6deg) rotateX(2deg) translateY(0)} 50%{transform:perspective(800px) rotateY(-8deg) rotateX(3deg) translateY(-14px)} }
+    @keyframes float-sec { 0%,100%{transform:perspective(800px) rotateY(6deg) rotateX(2deg) translateY(0)} 50%{transform:perspective(800px) rotateY(8deg) rotateX(3deg) translateY(-10px)} }
+
+    /* phone glass */
+    .phone::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 45%;
+      background: linear-gradient(180deg, rgba(255,255,255,.07) 0%, transparent);
+      border-radius: 36px 36px 0 0; z-index: 10; pointer-events: none;
+    }
+    .phone-notch {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 22px; background: #000; border-radius: 100px; z-index: 11;
+    }
+    .phone-screen { padding: 44px 14px 14px; height: 100%; display: flex; flex-direction: column; gap: 10px; }
+    .ps-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 0 8px; }
+    .ps-brand { font-size: .7rem; font-weight: 700; color: rgba(255,255,255,.5); letter-spacing: 1px; }
+    .ps-status {
+      display: flex; align-items: center; gap: 5px;
+      font-size: .6rem; font-weight: 700; color: var(--green);
+      background: rgba(0,255,136,.1); border: 1px solid rgba(0,255,136,.25);
+      padding: 3px 8px; border-radius: 100px;
+    }
+    .ps-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 1.5s infinite; }
+
+    .ps-map {
+      flex: 1; border-radius: 12px; overflow: hidden; position: relative;
+      background: #0a1628;
+      background-image:
+        linear-gradient(rgba(108,71,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108,71,255,.06) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .ps-map-pin {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 0 4px rgba(108,71,255,.3), 0 0 20px rgba(108,71,255,.6);
+      animation: pin-pulse 2s infinite;
+    }
+    @keyframes pin-pulse { 0%,100%{box-shadow:0 0 0 4px rgba(108,71,255,.3),0 0 20px rgba(108,71,255,.6)} 50%{box-shadow:0 0 0 8px rgba(108,71,255,.15),0 0 30px rgba(108,71,255,.8)} }
+
+    .ps-map-ring {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      border: 1px dashed rgba(108,71,255,.3); border-radius: 50%;
+      animation: ring-expand 3s linear infinite;
+    }
+    .ps-map-ring:nth-child(1) { width: 40px; height: 40px; }
+    .ps-map-ring:nth-child(2) { width: 70px; height: 70px; animation-delay: 1s; }
+    .ps-map-ring:nth-child(3) { width: 100px; height: 100px; animation-delay: 2s; }
+    @keyframes ring-expand { 0%{opacity:.8} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.1)} }
+
+    .ps-info {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px; padding: 10px 12px;
+    }
+    .ps-info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .ps-info-label { font-size: .6rem; color: var(--muted); font-weight: 500; }
+    .ps-info-val { font-size: .65rem; font-weight: 700; color: var(--white); }
+    .ps-info-loc { font-size: .58rem; color: var(--muted2); }
+    .ps-info-acc {
+      display: flex; align-items: center; gap: 5px;
+      font-size: .58rem; color: var(--green); font-weight: 700;
+    }
+    .ps-info-acc::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
+
+    .ps-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px; padding: 9px;
+      font-size: .65rem; font-weight: 700; color: #fff;
     }
 
-    @keyframes btn-pulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.4), 0 20px 60px rgba(124,58,237,0.5); }
-      50%      { box-shadow: 0 0 0 16px rgba(124,58,237,0), 0 20px 60px rgba(124,58,237,0.6); }
+    /* device label */
+    .device-label {
+      position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
+      font-size: .65rem; font-weight: 600; color: var(--muted2);
+      white-space: nowrap; letter-spacing: .5px; text-transform: uppercase;
     }
 
-    .download-btn:hover {
-      transform: translateY(-4px) scale(1.04);
-      box-shadow: 0 0 80px rgba(168,85,247,0.8), 0 30px 80px rgba(124,58,237,0.6);
+    /* glow lines under phones */
+    .phones-glow {
+      position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
+      width: 80%; height: 100px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(108,71,255,.35) 0%, transparent 70%);
+      pointer-events: none;
     }
 
-    .download-btn:active { transform: scale(0.98); }
-
-    .download-meta {
-      display: flex;
-      justify-content: center;
-      gap: 32px;
-      margin-top: 36px;
-      flex-wrap: wrap;
+    /* ===== SECTION COMMONS ===== */
+    section { position: relative; z-index: 2; }
+    .sec-label {
+      display: inline-block; font-size: .7rem; letter-spacing: 2px;
+      font-weight: 700; text-transform: uppercase; color: var(--accent3); margin-bottom: 12px;
     }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      color: var(--muted);
+    .sec-title {
+      font-size: clamp(2rem, 3.8vw, 3rem); font-weight: 900;
+      letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 16px;
     }
+    .sec-desc { font-size: 1rem; color: var(--muted); line-height: 1.75; max-width: 520px; }
+    .sec-head { text-align: center; margin-bottom: 64px; }
+    .sec-head .sec-desc { margin: 0 auto; }
 
-    .meta-item svg { color: var(--accent2); flex-shrink: 0; }
+    /* gradient text helper */
+    .g1 { background: linear-gradient(135deg, var(--white), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .g2 { background: linear-gradient(135deg, var(--accent2), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
-    /* =========================================================
-       HOW IT WORKS
-    ========================================================= */
-    #howto {
-      padding: 100px 0;
+    /* ===== FEATURE BAR ===== */
+    .feat-bar {
+      border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2);
+      padding: 0; overflow: hidden; position: relative; z-index: 2;
     }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-      margin-top: 60px;
+    .feat-bar-inner { display: flex; }
+    .feat-bar-item {
+      flex: 1; padding: 32px 28px;
+      border-right: 1px solid var(--border2);
+      display: flex; align-items: flex-start; gap: 16px;
+      transition: background .3s;
     }
-
-    .step {
-      text-align: center;
-      position: relative;
+    .feat-bar-item:last-child { border-right: none; }
+    .feat-bar-item:hover { background: var(--card-hover); }
+    .feat-bar-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+      background: rgba(108,71,255,.15); border: 1px solid rgba(108,71,255,.25);
     }
+    .feat-bar-text strong { display: block; font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
+    .feat-bar-text span { font-size: .8rem; color: var(--muted); line-height: 1.5; }
 
-    .step:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      top: 32px;
-      right: -16px;
-      width: 32px; height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
+    /* ===== HOW IT WORKS ===== */
+    #how { padding: 120px 0; }
+    .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step-item {
+      display: flex; gap: 24px; padding: 28px 0;
+      border-bottom: 1px solid var(--border2); cursor: pointer;
+      transition: all .3s; position: relative;
     }
+    .step-item:last-child { border-bottom: none; }
+    .step-item:hover .step-num { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+    .step-item.active .step-num { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 0 30px rgba(108,71,255,.5); }
 
     .step-num {
-      width: 64px; height: 64px;
-      border-radius: 50%;
+      width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 800; color: var(--muted);
+      transition: all .3s; background: var(--card);
+    }
+    .step-content {}
+    .step-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+    .step-desc { font-size: .88rem; color: var(--muted); line-height: 1.65; }
+
+    /* phone visual for how section */
+    .how-visual { position: relative; display: flex; justify-content: center; }
+    .how-phone {
+      width: 240px; height: 480px;
+      background: linear-gradient(160deg, #111128 0%, #0a0a1c 100%);
+      border-radius: 44px;
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,.08), 0 0 0 3px #000, 0 40px 100px rgba(0,0,0,.9), var(--glow);
+      overflow: hidden; position: relative;
+      animation: float-main 5s ease-in-out infinite;
+    }
+    .how-phone::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent);
+      border-radius: 44px 44px 0 0; z-index: 10; pointer-events: none;
+    }
+    .how-phone-notch {
+      position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 24px; background: #000; border-radius: 100px; z-index: 11;
+    }
+    .how-screen { padding: 50px 16px 16px; height: 100%; display: flex; flex-direction: column; gap: 12px; }
+    .hs-top { display: flex; justify-content: space-between; align-items: center; }
+    .hs-logo { font-size: .8rem; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
+    .hs-badge {
+      font-size: .55rem; font-weight: 700; color: var(--green);
+      background: rgba(0,255,136,.1); border: 1px solid rgba(0,255,136,.2);
+      padding: 3px 8px; border-radius: 100px; display: flex; align-items: center; gap: 4px;
+    }
+    .hs-badge::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); animation: blink 1.5s infinite; }
+    .hs-map {
+      flex: 1; border-radius: 14px; background: #081020;
+      background-image: linear-gradient(rgba(108,71,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(108,71,255,.07) 1px, transparent 1px);
+      background-size: 18px 18px; position: relative; overflow: hidden;
+    }
+    .hs-map-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hs-pin { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px rgba(108,71,255,.3), 0 0 25px rgba(108,71,255,.8); animation: pin-pulse 2s infinite; }
+    .hs-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(108,71,255,.3); animation: ring-expand 3s linear infinite; }
+    .hs-ring:nth-child(2) { width: 50px; height: 50px; }
+    .hs-ring:nth-child(3) { width: 90px; height: 90px; animation-delay: 1s; }
+    .hs-ring:nth-child(4) { width: 130px; height: 130px; animation-delay: 2s; }
+
+    .hs-card {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px; padding: 12px 14px;
+    }
+    .hs-card-title { font-size: .62rem; color: var(--muted); margin-bottom: 4px; }
+    .hs-card-loc { font-size: .75rem; font-weight: 700; margin-bottom: 2px; }
+    .hs-card-coord { font-size: .58rem; color: var(--muted2); font-family: monospace; }
+    .hs-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      border-radius: 12px; padding: 10px;
+      font-size: .7rem; font-weight: 700; color: #fff;
+      box-shadow: 0 4px 20px rgba(108,71,255,.4);
+    }
+
+    /* ===== FEATURES GRID ===== */
+    #features { padding: 120px 0; }
+    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .feat-card {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: var(--r2); padding: 32px 28px;
+      position: relative; overflow: hidden; transition: all .35s;
+    }
+    .feat-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(108,71,255,.05), transparent);
+      opacity: 0; transition: opacity .35s;
+    }
+    .feat-card:hover { transform: translateY(-6px); border-color: rgba(108,71,255,.4); box-shadow: 0 20px 60px rgba(108,71,255,.15); }
+    .feat-card:hover::after { opacity: 1; }
+    .feat-card.wide { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .feat-num { font-size: 3rem; font-weight: 900; color: rgba(255,255,255,.04); letter-spacing: -2px; line-height: 1; margin-bottom: 16px; }
+    .feat-icon-wrap {
+      width: 52px; height: 52px; border-radius: 14px; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .fi-purple { background: rgba(108,71,255,.18); border: 1px solid rgba(108,71,255,.3); }
+    .fi-cyan   { background: rgba(0,210,255,.15);  border: 1px solid rgba(0,210,255,.25); }
+    .fi-green  { background: rgba(0,255,136,.12);  border: 1px solid rgba(0,255,136,.2); }
+    .fi-pink   { background: rgba(236,72,153,.15); border: 1px solid rgba(236,72,153,.25); }
+    .feat-card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .feat-card-desc { font-size: .88rem; color: var(--muted); line-height: 1.65; }
+
+    /* ===== DOWNLOAD ===== */
+    #download { padding: 120px 0; }
+    .dl-wrap {
+      background: linear-gradient(135deg, rgba(108,71,255,.1), rgba(0,210,255,.05));
+      border: 1px solid rgba(108,71,255,.3);
+      border-radius: 40px; padding: 80px 60px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .dl-wrap::before {
+      content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(108,71,255,.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .dl-wrap > * { position: relative; z-index: 1; }
+
+    .dl-ver {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(108,71,255,.15); border: 1px solid rgba(108,71,255,.35);
+      border-radius: 100px; padding: 8px 20px; margin-bottom: 32px;
+      font-size: .75rem; font-weight: 700; color: var(--accent3); letter-spacing: 1px;
+    }
+    .dl-title { font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 900; letter-spacing: -2px; line-height: 1.1; margin-bottom: 16px; }
+    .dl-sub { font-size: 1rem; color: var(--muted); max-width: 460px; margin: 0 auto 44px; line-height: 1.7; }
+
+    /* Download platform buttons */
+    .dl-platforms { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
+    .dl-btn {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 18px 36px; border-radius: 100px;
+      font-size: 1rem; font-weight: 700; text-decoration: none;
+      transition: all .3s; border: none; cursor: pointer;
+    }
+    .dl-btn.android {
+      background: linear-gradient(135deg, #00c851, #007e33);
+      color: #fff;
+      box-shadow: 0 8px 32px rgba(0,200,81,.3);
+    }
+    .dl-btn.android:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 0 60px rgba(0,200,81,.5), 0 20px 50px rgba(0,200,81,.3); }
+    .dl-btn.ios {
+      background: linear-gradient(135deg, #555, #222);
+      color: rgba(255,255,255,.5);
+      border: 1px solid rgba(255,255,255,.1);
+      cursor: not-allowed;
+    }
+    .dl-btn.ios .dl-btn-badge { font-size: .6rem; color: var(--muted2); display: block; font-weight: 400; }
+    .dl-btn-icon { font-size: 1.4rem; }
+    .dl-btn-text {}
+    .dl-btn-text .dl-btn-label { display: block; font-size: .7rem; font-weight: 500; opacity: .7; margin-bottom: 1px; }
+    .dl-btn-text .dl-btn-name { display: block; }
+
+    .dl-meta { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; }
+    .dl-meta-item { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--muted); }
+    .dl-meta-item svg { color: var(--accent3); }
+
+    /* ===== PRICING ===== */
+    #pricing { padding: 120px 0; }
+    .pricing-tabs {
+      display: flex; justify-content: center; gap: 8px; margin-bottom: 56px;
+    }
+    .ptab {
+      padding: 10px 28px; border-radius: 100px; font-size: .85rem; font-weight: 700;
+      cursor: pointer; transition: all .25s; border: 1px solid var(--border2);
+      background: transparent; color: var(--muted);
+    }
+    .ptab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border-color: transparent; box-shadow: var(--glow); }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .price-card {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: var(--r2); padding: 36px 28px;
+      position: relative; transition: all .35s;
+    }
+    .price-card:hover { transform: translateY(-6px); border-color: rgba(108,71,255,.4); }
+    .price-card.featured {
+      background: linear-gradient(160deg, rgba(108,71,255,.12), rgba(108,71,255,.05));
+      border-color: rgba(108,71,255,.5);
+      box-shadow: var(--glow);
+    }
+    .price-tag {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
-      font-weight: 900;
-      margin: 0 auto 20px;
-      box-shadow: 0 0 30px rgba(124,58,237,0.5);
+      color: #fff; font-size: .65rem; font-weight: 800;
+      padding: 5px 16px; border-radius: 100px; letter-spacing: .5px; white-space: nowrap;
     }
-
-    .step-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 10px;
+    .price-platform { font-size: .7rem; font-weight: 700; color: var(--accent3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+    .price-period { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+    .price-amount {
+      font-size: 2.8rem; font-weight: 900; letter-spacing: -2px; line-height: 1;
+      margin: 16px 0 8px;
     }
+    .price-amount span { font-size: 1rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+    .price-note { font-size: .78rem; color: var(--muted); margin-bottom: 28px; }
+    .price-divider { height: 1px; background: var(--border2); margin: 20px 0; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 28px; }
+    .price-features li { display: flex; align-items: center; gap: 10px; font-size: .85rem; color: var(--muted); }
+    .price-features li::before { content: '✓'; color: var(--green); font-weight: 700; font-size: .9rem; flex-shrink: 0; }
 
-    .step-desc {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.65;
+    .price-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 14px; border-radius: 12px;
+      font-size: .9rem; font-weight: 700; cursor: pointer; text-decoration: none;
+      border: none; transition: all .25s;
     }
-
-    /* =========================================================
-       FAQ
-    ========================================================= */
-    #faq {
-      padding: 100px 0;
+    .price-btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; box-shadow: 0 8px 30px rgba(108,71,255,.35);
     }
+    .price-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(108,71,255,.5); }
+    .price-btn.ghost { background: var(--card); color: var(--white); border: 1px solid var(--border2); }
+    .price-btn.ghost:hover { background: var(--card-hover); border-color: rgba(108,71,255,.4); }
 
-    .faq-list {
-      max-width: 720px;
-      margin: 60px auto 0;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .wa-note {
+      text-align: center; margin-top: 32px;
+      font-size: .85rem; color: var(--muted);
     }
+    .wa-note a { color: var(--accent3); text-decoration: none; font-weight: 600; }
+    .wa-note a:hover { color: var(--white); }
 
+    /* ===== FAQ ===== */
+    #faq { padding: 100px 0; }
+    .faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
     .faq-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color 0.2s;
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: var(--r); overflow: hidden; transition: border-color .2s;
     }
-
-    .faq-item.open { border-color: var(--accent2); }
-
+    .faq-item.open { border-color: rgba(108,71,255,.4); }
     .faq-q {
-      padding: 22px 28px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.97rem;
-      gap: 16px;
-      user-select: none;
+      padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; font-size: .93rem; font-weight: 600; gap: 16px; user-select: none;
     }
-
-    .faq-q:hover { color: var(--accent2); }
-
-    .faq-arrow {
-      width: 28px; height: 28px;
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: transform 0.3s, background 0.3s;
-      font-size: 0.75rem;
+    .faq-q:hover { color: var(--accent3); }
+    .faq-icon {
+      width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: .7rem; transition: all .3s;
     }
-
-    .faq-item.open .faq-arrow {
-      transform: rotate(180deg);
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
+    .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--accent); border-color: var(--accent); }
     .faq-a {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease, padding 0.4s ease;
-      padding: 0 28px;
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.7;
+      max-height: 0; overflow: hidden; padding: 0 24px;
+      color: var(--muted); font-size: .88rem; line-height: 1.7;
+      transition: max-height .4s ease, padding .4s ease;
     }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 24px 20px; }
 
-    .faq-item.open .faq-a {
-      max-height: 200px;
-      padding: 0 28px 22px;
-    }
-
-    /* =========================================================
-       FOOTER
-    ========================================================= */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 48px 0;
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .footer-copy {
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .footer-copy a {
-      color: var(--accent2);
-      text-decoration: none;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 24px;
-    }
-
-    .footer-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: color 0.2s;
-    }
-
+    /* ===== FOOTER ===== */
+    footer { border-top: 1px solid var(--border2); padding: 56px 0; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+    .footer-logo { font-size: 1.4rem; font-weight: 800; background: linear-gradient(135deg, #fff, var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .footer-tagline { font-size: .8rem; color: var(--muted2); margin-top: 4px; }
+    .footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
     .footer-links a:hover { color: var(--white); }
+    .footer-copy { font-size: .8rem; color: var(--muted2); }
 
-    /* =========================================================
-       SCROLL REVEAL
-    ========================================================= */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
+    /* ===== SCROLL REVEAL ===== */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* =========================================================
-       MOBILE
-    ========================================================= */
-    @media (max-width: 900px) {
-      .hero-grid { grid-template-columns: 1fr; gap: 50px; }
-      .phone-scene { order: -1; }
-      .features-grid { grid-template-columns: repeat(2, 1fr); }
-      .steps-grid { grid-template-columns: 1fr; }
-      .step:not(:last-child)::after { display: none; }
-      .download-card { padding: 50px 28px; }
+    /* ===== MOBILE MENU ===== */
+    .mob-menu {
+      display: none; position: fixed; inset: 0; z-index: 998;
+      background: rgba(6,6,18,.97); backdrop-filter: blur(20px);
+      flex-direction: column; align-items: center; justify-content: center; gap: 36px;
+    }
+    .mob-menu.open { display: flex; }
+    .mob-menu a { color: var(--white); text-decoration: none; font-size: 1.5rem; font-weight: 700; transition: color .2s; }
+    .mob-menu a:hover { color: var(--accent3); }
+    .mob-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--muted); font-size: 1.6rem; cursor: pointer; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 60px; }
+      .phones-wrap { order: -1; }
+      .how-grid { grid-template-columns: 1fr; }
+      .how-visual { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feat-card.wide { grid-column: span 1; grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .feat-bar-inner { flex-direction: column; }
+      .feat-bar-item { border-right: none; border-bottom: 1px solid var(--border2); }
+      .feat-bar-item:last-child { border-bottom: none; }
       .nav-links { display: none; }
       .hamburger { display: flex; }
       h1 { text-align: center; }
-      .hero-sub { text-align: center; max-width: 100%; }
-      .btn-group { justify-content: center; }
-      .hero-stats { justify-content: center; }
-      .badge { display: none; }
+      .hero-badge, .hero-tag { display: none; }
+      .hero-app-name { text-align: center; }
+      .hero-desc { text-align: center; max-width: 100%; }
+      .hero-btns { justify-content: center; }
+      .hero-pills { justify-content: center; }
+      .dl-wrap { padding: 52px 28px; }
     }
-
     @media (max-width: 600px) {
-      .features-grid { grid-template-columns: 1fr; }
-      .download-meta { gap: 16px; }
+      .dl-platforms { flex-direction: column; align-items: center; }
+      .dl-btn { width: 100%; max-width: 320px; justify-content: center; }
+      .dl-meta { gap: 16px; }
       .footer-inner { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
     }
-
-    /* Mobile menu overlay */
-    .mobile-menu {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 998;
-      background: rgba(5,5,9,0.97);
-      backdrop-filter: blur(24px);
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 36px;
-    }
-
-    .mobile-menu.active { display: flex; }
-
-    .mobile-menu a {
-      color: var(--white);
-      text-decoration: none;
-      font-size: 1.5rem;
-      font-weight: 700;
-      transition: color 0.2s;
-    }
-
-    .mobile-menu a:hover { color: var(--accent2); }
-
-    .mobile-close {
-      position: absolute;
-      top: 24px; right: 24px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--muted);
-      background: none;
-      border: none;
-      transition: color 0.2s;
-    }
-
-    .mobile-close:hover { color: var(--white); }
   </style>
 </head>
-
 <body>
 
-<!-- ======================================================
-     CANVAS BG
-====================================================== -->
-<canvas id="bg-canvas"></canvas>
+<!-- BG -->
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
 
-<!-- ======================================================
-     MOBILE MENU
-====================================================== -->
-<div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-close" onclick="closeMobileMenu()">✕</button>
-  <a href="#features" onclick="closeMobileMenu()">Özellikler</a>
-  <a href="#howto"    onclick="closeMobileMenu()">Nasıl Yüklerim</a>
-  <a href="#faq"      onclick="closeMobileMenu()">SSS</a>
-  <a href="#download" onclick="closeMobileMenu()" style="color:var(--accent2)">İndir</a>
+<!-- MOBILE MENU -->
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-close" onclick="closeMob()">✕</button>
+  <a href="#how"      onclick="closeMob()">Nasıl Çalışır</a>
+  <a href="#features" onclick="closeMob()">Özellikler</a>
+  <a href="#pricing"  onclick="closeMob()">Planlar</a>
+  <a href="#faq"      onclick="closeMob()">SSS</a>
+  <a href="#download" onclick="closeMob()" style="color:var(--accent3)">⬇ İndir</a>
 </div>
 
-<!-- ======================================================
-     NAV
-====================================================== -->
-<nav id="navbar">
+<!-- NAV -->
+<nav id="nav">
   <div class="wrap">
-    <div class="logo">FM<span>iuc</span></div>
-    <ul class="nav-links">
-      <li><a href="#features">Özellikler</a></li>
-      <li><a href="#howto">Nasıl Yüklerim</a></li>
-      <li><a href="#faq">SSS</a></li>
-      <li><a href="#download" class="nav-cta">⬇ İndir</a></li>
-    </ul>
-    <div class="hamburger" onclick="openMobileMenu()" aria-label="Menü">
-      <span></span><span></span><span></span>
+    <div class="nav-inner">
+      <a href="#" class="logo">FMiuc</a>
+      <ul class="nav-links">
+        <li><a href="#how">Nasıl Çalışır</a></li>
+        <li><a href="#features">Özellikler</a></li>
+        <li><a href="#pricing">Planlar</a></li>
+        <li><a href="#faq">SSS</a></li>
+        <li><a href="#download" class="nav-btn">⬇ İndir</a></li>
+      </ul>
+      <div class="hamburger" onclick="openMob()"><span></span><span></span><span></span></div>
     </div>
   </div>
 </nav>
 
-<!-- ======================================================
-     HERO
-====================================================== -->
+<!-- ======================== HERO ======================== -->
 <section id="hero">
   <div class="wrap">
-    <div class="hero-grid">
+    <div class="hero-inner">
 
-      <!-- Left: Text -->
-      <div class="hero-text">
-        <div class="badge">
-          <div class="badge-dot"></div>
-          Versiyon 1.7 · Ücretsiz
+      <!-- TEXT -->
+      <div>
+        <div class="hero-badge">
+          <div class="hero-badge-dot"></div>
+          KURULUM KOLAY · ROOT YOK · JAILBREAK YOK
         </div>
-
-        <h1>
-          Müziği <span class="grad">Özgürce</span><br />
-          Dinle. Kontrol<br />
-          Senin Elinde.
-        </h1>
-
-        <p class="hero-sub">
-          FMiuc, <strong>reklam yok, limit yok</strong> felsefesiyle tasarlandı.
-          Gelişmiş ses kalitesi, tema desteği ve tonlarca özellik
-          tamamen ücretsiz.
+        <div class="hero-tag">Konum özgürlüğünün yeni standardı</div>
+        <h1>Find Me If <span class="small">U Can</span></h1>
+        <span class="hero-app-name">FMiuc</span>
+        <p class="hero-desc">
+          FMiuc ile <strong>dijital konumunu saniyeler içinde yönet.</strong>
+          iPhone ve Android üzerinde akıcı, güvenli ve zahmetsiz bir deneyim.
         </p>
-
-        <div class="btn-group">
+        <div class="hero-btns">
           <a href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk"
-             class="btn-primary"
-             download="FMiuc-v1.7.apk">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            APK İndir · v1.7
+             class="btn-main" download="FMiuc-v1.7.apk">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            FMiuc'u İndir
           </a>
-          <a href="#features" class="btn-secondary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-            Özellikleri Gör
+          <a href="#how" class="btn-ghost">
+            Nasıl çalışır
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg>
           </a>
         </div>
-
-        <div class="hero-stats">
-          <div class="stat">
-            <div class="stat-num">500K+</div>
-            <div class="stat-label">İndirme</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num">4.9★</div>
-            <div class="stat-label">Kullanıcı Puanı</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num">0</div>
-            <div class="stat-label">Reklam</div>
-          </div>
+        <div class="hero-pills">
+          <div class="pill"><div class="dot"></div>Aktif · Hassasiyet 3m</div>
+          <div class="pill">📍 Anlık Konum</div>
+          <div class="pill">🔒 Gizlilik Öncelikli</div>
         </div>
       </div>
 
-      <!-- Right: 3D Phone -->
-      <div class="phone-scene">
-        <div class="glow-orb orb1"></div>
-        <div class="glow-orb orb2"></div>
-
-        <div class="phone-float">
-          <div class="phone-shell">
-            <div class="phone-notch">
-              <div class="phone-cam"></div>
+      <!-- PHONES -->
+      <div class="phones-wrap">
+        <!-- Samsung phone -->
+        <div class="phone secondary" style="margin-bottom:30px">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ps-header">
+              <div class="ps-brand">SAMSUNG S24</div>
+              <div class="ps-status"><div class="ps-status-dot"></div>AKTİF</div>
             </div>
-            <div class="phone-screen">
-              <div class="screen-header">
-                <div class="screen-app-icon">🎵</div>
-                <div class="screen-title">FMiuc</div>
-                <div class="screen-sub">Şu an çalıyor</div>
-              </div>
-              <div class="screen-player">
-                <div class="screen-track">♪ FMiuc Premium Mix</div>
-                <div class="screen-progress"><div class="screen-progress-fill"></div></div>
-                <div class="screen-controls">⏮ ⏸ ⏭</div>
-              </div>
-              <div class="screen-bars">
-                <div class="screen-bar"><div class="screen-bar-fill"></div></div>
-                <div class="screen-bar"><div class="screen-bar-fill"></div></div>
-                <div class="screen-bar"><div class="screen-bar-fill"></div></div>
-                <div class="screen-bar"><div class="screen-bar-fill"></div></div>
-              </div>
+            <div class="ps-map">
+              <div class="ps-map-ring"></div>
+              <div class="ps-map-ring"></div>
+              <div class="ps-map-ring"></div>
+              <div class="ps-map-pin"></div>
             </div>
+            <div class="ps-info">
+              <div class="ps-info-row">
+                <div class="ps-info-label">Mevcut konum</div>
+                <div class="ps-info-acc">Hassasiyet 3m</div>
+              </div>
+              <div class="ps-info-val">Shibuya, Tokyo</div>
+              <div class="ps-info-loc">40.6782° N · 73.9442° W</div>
+            </div>
+            <div class="ps-btn">📍 Yeni rota</div>
           </div>
+          <div class="device-label">Samsung S24</div>
         </div>
+
+        <!-- iPhone -->
+        <div class="phone main">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ps-header">
+              <div class="ps-brand">IPHONE 15 PRO</div>
+              <div class="ps-status"><div class="ps-status-dot"></div>AKTİF</div>
+            </div>
+            <div class="ps-map">
+              <div class="ps-map-ring"></div>
+              <div class="ps-map-ring"></div>
+              <div class="ps-map-ring"></div>
+              <div class="ps-map-pin"></div>
+            </div>
+            <div class="ps-info">
+              <div class="ps-info-row">
+                <div class="ps-info-label">Mevcut konum</div>
+                <div class="ps-info-acc">Hassasiyet 3m</div>
+              </div>
+              <div class="ps-info-val">Brooklyn, New York</div>
+              <div class="ps-info-loc">40.6782° N · 73.9442° W</div>
+            </div>
+            <div class="ps-btn">📍 Yeni rota</div>
+          </div>
+          <div class="device-label">iPhone 15 Pro</div>
+        </div>
+
+        <div class="phones-glow"></div>
       </div>
 
     </div>
   </div>
 </section>
 
-<!-- ======================================================
-     FEATURES
-====================================================== -->
+<!-- FEATURE BAR -->
+<div class="feat-bar reveal" style="position:relative;z-index:2">
+  <div class="wrap">
+    <div class="feat-bar-inner">
+      <div class="feat-bar-item">
+        <div class="feat-bar-icon">⚡</div>
+        <div class="feat-bar-text">
+          <strong>Anında Konum</strong>
+          <span>Saniyeler içinde güncelle</span>
+        </div>
+      </div>
+      <div class="feat-bar-item">
+        <div class="feat-bar-icon">🔒</div>
+        <div class="feat-bar-text">
+          <strong>Gizlilik Odaklı</strong>
+          <span>Verin bizde kalmaz</span>
+        </div>
+      </div>
+      <div class="feat-bar-item">
+        <div class="feat-bar-icon">🗺️</div>
+        <div class="feat-bar-text">
+          <strong>Rota Simülasyonu</strong>
+          <span>Doğal hız ve duraklarla</span>
+        </div>
+      </div>
+      <div class="feat-bar-item">
+        <div class="feat-bar-icon">📱</div>
+        <div class="feat-bar-text">
+          <strong>İki Platform</strong>
+          <span>iPhone ve Android</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== HOW IT WORKS ======================== -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">Nasıl Çalışır</div>
+      <h2 class="sec-title">TEK UYGULAMA.<br /><span class="g2">TAM KONTROL.</span></h2>
+      <p class="sec-desc">
+        Konumun, senin kuralların. Karmaşık kurulumları geride bırak.
+        FMiuc, güçlü konum araçlarını sade ve güven veren bir arayüzde bir araya getirir.
+      </p>
+    </div>
+
+    <div class="how-grid">
+      <div class="steps">
+        <div class="step-item active reveal">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <div class="step-title">Anında konum</div>
+            <div class="step-desc">Haritada bir nokta seç ve konumunu saniyeler içinde güncelle. Hiçbir teknik bilgiye gerek yok.</div>
+          </div>
+        </div>
+        <div class="step-item reveal">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <div class="step-title">Gizlilik odaklı</div>
+            <div class="step-desc">Kontrol sende kalır. İhtiyacın olmayan hiçbir veriyi istemeyiz. Sıfır log, sıfır izleme.</div>
+          </div>
+        </div>
+        <div class="step-item reveal">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <div class="step-title">Rota simülasyonu</div>
+            <div class="step-desc">Doğal hız ve duraklarla kişiselleştirilmiş rotalar oluştur. Gerçekçi hareket profilleri.</div>
+          </div>
+        </div>
+        <div class="step-item reveal">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <div class="step-title">İki platform</div>
+            <div class="step-desc">iPhone ve Samsung cihazlarında aynı rafine deneyimi yaşa. Tek hesap, tüm cihazlar.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="how-visual reveal">
+        <div class="how-phone">
+          <div class="how-phone-notch"></div>
+          <div class="how-screen">
+            <div class="hs-top">
+              <div class="hs-logo">FMiuc</div>
+              <div class="hs-badge">AKTİF</div>
+            </div>
+            <div class="hs-map">
+              <div class="hs-map-center">
+                <div class="hs-ring"></div>
+                <div class="hs-ring"></div>
+                <div class="hs-ring"></div>
+                <div class="hs-pin"></div>
+              </div>
+            </div>
+            <div class="hs-card">
+              <div class="hs-card-title">Mevcut konum</div>
+              <div class="hs-card-loc">Brooklyn, New York</div>
+              <div class="hs-card-coord">40.6782° N · 73.9442° W</div>
+            </div>
+            <div class="hs-btn">
+              <span>📍</span> Konumu Güncelle
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== FEATURES ======================== -->
 <section id="features">
   <div class="wrap">
-    <div class="section-header reveal">
-      <div class="section-label">Neden FMiuc?</div>
-      <h2>Her Şey <span style="background:linear-gradient(135deg,var(--neon),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Dahil</span></h2>
-      <p class="section-desc">
-        Ekstra ödeme, gizli özellik ya da reklam yok.
-        İndirdiğin anda tüm özellikler sende.
-      </p>
+    <div class="sec-head reveal">
+      <div class="sec-label">Özellikler</div>
+      <h2 class="sec-title">Konum sınırlarını <span class="g1">kaldır.</span></h2>
+      <p class="sec-desc">Bilgisayarı geride bırak. Kontrolü yanında taşı. Güç, her zaman cebinde.</p>
     </div>
 
     <div class="features-grid">
       <div class="feat-card reveal">
-        <div class="feat-icon purple">🚫</div>
-        <div class="feat-title">Sıfır Reklam</div>
-        <div class="feat-desc">Hiçbir pop-up, banner ya da araya giren video yok. Müzik dinleme deneyimi tam ve kesintisiz.</div>
+        <div class="feat-num">01</div>
+        <div class="feat-icon-wrap fi-purple">⚡</div>
+        <div class="feat-card-title">Saniyeler İçinde Konum</div>
+        <div class="feat-card-desc">Haritadan bir nokta seç, tek dokunuşla konumunu güncelle. Gecikme yok, karmaşıklık yok.</div>
       </div>
       <div class="feat-card reveal">
-        <div class="feat-icon cyan">⬇</div>
-        <div class="feat-title">Çevrimdışı Dinle</div>
-        <div class="feat-desc">İstediğin şarkıları indir, internet olmadan da dinle. Data tasarrufu yap, istediğin yerde müzik.</div>
+        <div class="feat-num">02</div>
+        <div class="feat-icon-wrap fi-cyan">🔒</div>
+        <div class="feat-card-title">Tam Gizlilik</div>
+        <div class="feat-card-desc">Verin bizde kalmaz. Sıfır log, sıfır takip. Kontrol tamamen sende kalır.</div>
       </div>
       <div class="feat-card reveal">
-        <div class="feat-icon pink">🎨</div>
-        <div class="feat-title">Tema & Arayüz</div>
-        <div class="feat-desc">Özelleştirilebilir temalar, koyu mod desteği ve kişisel tercihlerine göre tam bir arayüz özgürlüğü.</div>
+        <div class="feat-num">03</div>
+        <div class="feat-icon-wrap fi-green">🗺️</div>
+        <div class="feat-card-title">Akıllı Rota Simülasyonu</div>
+        <div class="feat-card-desc">Gerçekçi hız profilleri, özelleştirilebilir duraklar ve doğal hareket simülasyonu.</div>
       </div>
       <div class="feat-card reveal">
-        <div class="feat-icon green">🔊</div>
-        <div class="feat-title">HD Ses Kalitesi</div>
-        <div class="feat-desc">320kbps yüksek kaliteli ses akışı ve gelişmiş ekolayzer. Kulaklığın gerçek potansiyelini keşfet.</div>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon orange">🔀</div>
-        <div class="feat-title">Gelişmiş Kontroller</div>
-        <div class="feat-desc">Özel çalma listeleri, karıştırma, tekrar modu ve çapraz geçiş efektleri tam kontrolde.</div>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon yellow">🔒</div>
-        <div class="feat-title">Güvenli & Hafif</div>
-        <div class="feat-desc">Minimal izin gereksinimleri, iz bırakmayan tasarım. Gizliliğine saygı duyan tek müzik uygulaması.</div>
+        <div class="feat-num">04</div>
+        <div class="feat-icon-wrap fi-pink">📱</div>
+        <div class="feat-card-title">Evrensel Uyumluluk</div>
+        <div class="feat-card-desc">iPhone 15 Pro'dan Samsung S24'e, tüm modern cihazlarda kusursuz çalışır.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================
-     HOW TO INSTALL
-====================================================== -->
-<section id="howto">
-  <div class="wrap">
-    <div class="section-header reveal">
-      <div class="section-label">Kurulum</div>
-      <h2>3 Adımda <span style="background:linear-gradient(135deg,var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Hazır</span></h2>
-      <p class="section-desc">APK kurulumu çok basit, sadece birkaç dakika.</p>
-    </div>
-
-    <div class="steps-grid">
-      <div class="step reveal">
-        <div class="step-num">1</div>
-        <div class="step-title">APK'yı İndir</div>
-        <div class="step-desc">Aşağıdaki büyük indir butonuna bas. FMiuc-v1.7.apk cihazına inecek.</div>
-      </div>
-      <div class="step reveal">
-        <div class="step-num">2</div>
-        <div class="step-title">Bilinmeyen Kaynağa İzin Ver</div>
-        <div class="step-desc">Android Ayarlar → Güvenlik → "Bilinmeyen kaynaklardan yükleme" seçeneğini aç.</div>
-      </div>
-      <div class="step reveal">
-        <div class="step-num">3</div>
-        <div class="step-title">Yükle & Keyfini Çıkar</div>
-        <div class="step-desc">İndirilen APK dosyasına dokun, yükle butonuna bas. Tamam, hazırsın!</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================================================
-     DOWNLOAD CTA
-====================================================== -->
+<!-- ======================== DOWNLOAD ======================== -->
 <section id="download">
   <div class="wrap">
-    <div class="download-card reveal">
-      <div class="version-chip">
-        ✦ FMiuc v1.7 · Stable Build
-      </div>
+    <div class="dl-wrap reveal">
+      <div class="dl-ver">✦ FMiuc v1.7 · Stable Release</div>
 
-      <div class="download-title">
-        Hemen <span class="grad">İndir</span>
-      </div>
-
-      <p class="download-sub">
-        Tamamen ücretsiz. Kayıt gerekmez. Cihazına bir kez yükle,
-        ömür boyu kullan.
+      <h2 class="dl-title">UYGULAMAYI EDİN<br /><span class="g2">Kontrol, tüm cihazlarında.</span></h2>
+      <p class="dl-sub">
+        Android, iPhone ve PC indirme bağlantıları burada.
+        Hemen indir, saniyeler içinde kur.
       </p>
 
-      <a href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk"
-         class="download-btn"
-         download="FMiuc-v1.7.apk">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7,10 12,15 17,10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        APK İndir · v1.7 (3.4 MB)
-      </a>
+      <div class="dl-platforms">
+        <!-- ANDROID — aktif indirme -->
+        <a href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk"
+           class="dl-btn android" download="FMiuc-v1.7.apk">
+          <div class="dl-btn-icon">🤖</div>
+          <div class="dl-btn-text">
+            <span class="dl-btn-label">Android 10+</span>
+            <span class="dl-btn-name">Android İndir</span>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </a>
 
-      <div class="download-meta">
-        <div class="meta-item">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Virüssüz & Güvenli
+        <!-- iOS — yakında -->
+        <div class="dl-btn ios">
+          <div class="dl-btn-icon">🍎</div>
+          <div class="dl-btn-text">
+            <span class="dl-btn-label">iOS</span>
+            <span class="dl-btn-name">iPhone <span class="dl-btn-badge">Yakında gelecek</span></span>
+          </div>
         </div>
-        <div class="meta-item">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-          Android 5.0+
+
+        <!-- PC — yakında -->
+        <div class="dl-btn ios">
+          <div class="dl-btn-icon">💻</div>
+          <div class="dl-btn-text">
+            <span class="dl-btn-label">Windows</span>
+            <span class="dl-btn-name">PC <span class="dl-btn-badge">Yakında gelecek</span></span>
+          </div>
         </div>
-        <div class="meta-item">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+
+      <div class="dl-meta">
+        <div class="dl-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Güvenli & Virüssüz
+        </div>
+        <div class="dl-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          Android 10+
+        </div>
+        <div class="dl-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           Sadece 3.4 MB
         </div>
-        <div class="meta-item">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          Ücretsiz & Açık
+        <div class="dl-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Root Gerektirmez
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================
-     FAQ
-====================================================== -->
+<!-- ======================== PRICING ======================== -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">Üyelik Planları</div>
+      <h2 class="sec-title">Sana uygun <span class="g1">süreyi seç.</span></h2>
+      <p class="sec-desc">Planını ve süreni belirle. Satın alma detaylarını WhatsApp üzerinden birlikte tamamlayalım.</p>
+    </div>
+
+    <!-- Platform Tabs -->
+    <div class="pricing-tabs reveal">
+      <button class="ptab active" onclick="switchTab(this,'ios')">iOS</button>
+      <button class="ptab" onclick="switchTab(this,'android')">Android</button>
+    </div>
+
+    <!-- iOS plans -->
+    <div class="pricing-grid" id="plan-ios">
+      <div class="price-card reveal">
+        <div class="price-platform">iOS</div>
+        <div class="price-period">1 Aylık</div>
+        <div class="price-amount">₺<span>Fiyat için</span></div>
+        <div class="price-note">WhatsApp'tan sor</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Sınırsız konum değişimi</li>
+          <li>Rota simülasyonu</li>
+          <li>Teknik destek</li>
+        </ul>
+        <a href="https://wa.me/?text=FMiuc%20iOS%201%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn ghost">
+          💬 WhatsApp'tan Sor
+        </a>
+      </div>
+      <div class="price-card featured reveal">
+        <div class="price-tag">⭐ En Popüler</div>
+        <div class="price-platform">iOS</div>
+        <div class="price-period">3 Aylık</div>
+        <div class="price-amount">₺<span>Fiyat için</span></div>
+        <div class="price-note">WhatsApp'tan sor</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Sınırsız konum değişimi</li>
+          <li>Rota simülasyonu</li>
+          <li>Öncelikli destek</li>
+          <li>Yeni özellikler erken erişim</li>
+        </ul>
+        <a href="https://wa.me/?text=FMiuc%20iOS%203%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn primary">
+          💬 Hemen Başla
+        </a>
+      </div>
+      <div class="price-card reveal">
+        <div class="price-platform">iOS</div>
+        <div class="price-period">6 Aylık</div>
+        <div class="price-amount">₺<span>Fiyat için</span></div>
+        <div class="price-note">WhatsApp'tan sor</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Sınırsız konum değişimi</li>
+          <li>Rota simülasyonu</li>
+          <li>VIP destek hattı</li>
+          <li>Tüm özellikler dahil</li>
+          <li>Gelecek güncellemeler</li>
+        </ul>
+        <a href="https://wa.me/?text=FMiuc%20iOS%206%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn ghost">
+          💬 WhatsApp'tan Sor
+        </a>
+      </div>
+    </div>
+
+    <!-- Android plans -->
+    <div class="pricing-grid" id="plan-android" style="display:none">
+      <div class="price-card reveal">
+        <div class="price-platform">Android</div>
+        <div class="price-period">1 Aylık</div>
+        <div class="price-amount">₺<span>Fiyat için</span></div>
+        <div class="price-note">WhatsApp'tan sor</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Sınırsız konum değişimi</li>
+          <li>Rota simülasyonu</li>
+          <li>Teknik destek</li>
+        </ul>
+        <a href="https://wa.me/?text=FMiuc%20Android%201%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn ghost">
+          💬 WhatsApp'tan Sor
+        </a>
+      </div>
+      <div class="price-card featured reveal">
+        <div class="price-tag">⭐ En Popüler</div>
+        <div class="price-platform">Android</div>
+        <div class="price-period">3 Aylık</div>
+        <div class="price-amount">₺<span>Fiyat için</span></div>
+        <div class="price-note">WhatsApp'tan sor</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Sınırsız konum değişimi</li>
+          <li>Rota simülasyonu</li>
+          <li>Öncelikli destek</li>
+          <li>Yeni özellikler erken erişim</li>
+        </ul>
+        <a href="https://wa.me/?text=FMiuc%20Android%203%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn primary">
+          💬 Hemen Başla
+        </a>
+      </div>
+      <div class="price-card reveal">
+        <div class="price-platform">Android</div>
+        <div class="price-period">6 Aylık</div>
+        <div class="price-amount">₺<span>Fiyat için</span></div>
+        <div class="price-note">WhatsApp'tan sor</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Sınırsız konum değişimi</li>
+          <li>Rota simülasyonu</li>
+          <li>VIP destek hattı</li>
+          <li>Tüm özellikler dahil</li>
+          <li>Gelecek güncellemeler</li>
+        </ul>
+        <a href="https://wa.me/?text=FMiuc%20Android%206%20Aylık%20plan%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" class="price-btn ghost">
+          💬 WhatsApp'tan Sor
+        </a>
+      </div>
+    </div>
+
+    <p class="wa-note reveal">
+      📩 Satın alma detayları için
+      <a href="https://wa.me/?text=FMiuc%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener">WhatsApp üzerinden</a>
+      iletişime geç. Hızlı yanıt garantisi.
+    </p>
+  </div>
+</section>
+
+<!-- ======================== HOW TO INSTALL ======================== -->
+<section style="padding:80px 0; position:relative;z-index:2;">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">Kurulum</div>
+      <h2 class="sec-title">SADECE <span class="g2">ÜÇ ADIM</span></h2>
+      <p class="sec-desc">Kur. Seç. Hareket et.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:800px;margin:0 auto" class="steps-row">
+      <div class="price-card reveal" style="text-align:center;padding:36px 24px">
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;margin:0 auto 20px;box-shadow:var(--glow)">1</div>
+        <div class="feat-card-title" style="margin-bottom:8px">FMiuc'u bağla</div>
+        <div class="feat-card-desc">Telefonunu hızlı kurulum akışıyla hazırla.</div>
+      </div>
+      <div class="price-card reveal featured" style="text-align:center;padding:36px 24px">
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;margin:0 auto 20px;box-shadow:0 0 30px rgba(0,210,255,.4)">2</div>
+        <div class="feat-card-title" style="margin-bottom:8px">Noktayı seç</div>
+        <div class="feat-card-desc">Haritadan hedef konumunu veya rotanı belirle.</div>
+      </div>
+      <div class="price-card reveal" style="text-align:center;padding:36px 24px">
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;margin:0 auto 20px;box-shadow:var(--glow)">3</div>
+        <div class="feat-card-title" style="margin-bottom:8px">Kontrolü al</div>
+        <div class="feat-card-desc">Tek dokunuşla başlat, dilediğinde durdur.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== FAQ ======================== -->
 <section id="faq">
   <div class="wrap">
-    <div class="section-header reveal">
-      <div class="section-label">Merak Edilenler</div>
-      <h2>Sık Sorulan <span style="background:linear-gradient(135deg,var(--neon),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Sorular</span></h2>
+    <div class="sec-head reveal">
+      <div class="sec-label">SSS</div>
+      <h2 class="sec-title">Merak <span class="g1">edilenler.</span></h2>
     </div>
-
     <div class="faq-list">
       <div class="faq-item">
-        <div class="faq-q">
-          APK güvenli mi?
-          <div class="faq-arrow">▾</div>
-        </div>
-        <div class="faq-a">Evet, FMiuc APK dosyası tamamen temiz ve güvenlidir. Herhangi bir kötü amaçlı yazılım, casus yazılım veya reklam yazılımı içermez. Kaynak kodu şeffaf şekilde paylaşılmaktadır.</div>
+        <div class="faq-q">Root veya Jailbreak gerekiyor mu? <div class="faq-icon">+</div></div>
+        <div class="faq-a">Hayır, kesinlikle gerekmiyor. FMiuc hem iOS hem Android'de root veya jailbreak olmadan çalışır.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">
-          Hangi Android sürümlerinde çalışır?
-          <div class="faq-arrow">▾</div>
-        </div>
-        <div class="faq-a">FMiuc, Android 5.0 (Lollipop) ve üzeri tüm sürümlerde sorunsuz çalışır. Hem eski hem de yeni cihazlarla tam uyumludur.</div>
+        <div class="faq-q">Hangi cihazlarla uyumlu? <div class="faq-icon">+</div></div>
+        <div class="faq-a">Android 10 ve üzeri tüm cihazlarla uyumludur. iOS desteği yakında eklenecek. Samsung, Xiaomi, Huawei ve daha fazlası desteklenir.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">
-          Neden Play Store'da yok?
-          <div class="faq-arrow">▾</div>
-        </div>
-        <div class="faq-a">FMiuc, bağımsız bir proje olarak geliştirilmekte ve Play Store politikalarının dışında tutulmaktadır. Bu sayede kullanıcılara tam özgürlük ve kısıtsız özellikler sunulabilmektedir.</div>
+        <div class="faq-q">Konum değişikliğim tespit edilir mi? <div class="faq-icon">+</div></div>
+        <div class="faq-a">FMiuc, gerçekçi hareket profilleri ve doğal hız simülasyonu ile konumunun sahte görünmesini minimuma indirir. Ayrıntılar için destek ekibimizle iletişime geç.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">
-          Güncellemeler nasıl geliyor?
-          <div class="faq-arrow">▾</div>
-        </div>
-        <div class="faq-a">Yeni sürümler bu sayfada yayınlanmaktadır. Güncelleme geldiğinde yeni APK dosyasını indirip kurman yeterli; mevcut verilerini korur.</div>
+        <div class="faq-q">Ödeme nasıl yapılıyor? <div class="faq-icon">+</div></div>
+        <div class="faq-a">Tüm satın alma işlemleri WhatsApp üzerinden yürütülmektedir. Planını seç, mesaj at, birkaç dakika içinde aktifleştiriyoruz.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">
-          Ücretli mi?
-          <div class="faq-arrow">▾</div>
-        </div>
-        <div class="faq-a">Hayır, tamamen ücretsizdir. Gizli ödeme, abonelik veya premium kademesi yoktur. Tüm özellikler sıfır ücretle erişilebilir durumda.</div>
+        <div class="faq-q">iOS desteği ne zaman gelecek? <div class="faq-icon">+</div></div>
+        <div class="faq-a">iOS versiyonu üzerinde aktif olarak çalışıyoruz. Mevcut iOS kullanıcıları için farklı çözümler sunuyoruz — WhatsApp'tan bilgi al.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================
-     FOOTER
-====================================================== -->
+<!-- ======================== FOOTER ======================== -->
 <footer>
   <div class="wrap">
     <div class="footer-inner">
-      <div class="footer-copy">
-        © 2026 <strong style="color:var(--accent2)">FMiuc</strong>. Tüm haklar saklıdır.
-        <a href="https://github.com/fakerruserr4343-commits/FMuic" target="_blank" rel="noopener"> GitHub</a>
+      <div>
+        <div class="footer-logo">FMiuc</div>
+        <div class="footer-tagline">Find Me If U Can — Konum özgürlüğünün yeni standardı</div>
       </div>
       <div class="footer-links">
+        <a href="#how">Nasıl Çalışır</a>
         <a href="#features">Özellikler</a>
-        <a href="#howto">Kurulum</a>
+        <a href="#pricing">Planlar</a>
+        <a href="#faq">SSS</a>
         <a href="#download">İndir</a>
-        <a href="https://github.com/fakerruserr4343-commits/FMuic" target="_blank" rel="noopener">GitHub</a>
       </div>
+      <div class="footer-copy">© 2026 FMiuc. Tüm haklar saklıdır.</div>
     </div>
   </div>
 </footer>
 
-<!-- ======================================================
-     SCRIPTS
-====================================================== -->
+<!-- ======================== SCRIPTS ======================== -->
 <script>
-/* ---- Canvas Particle Background ---- */
-(function() {
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, particles = [], mouse = { x: 0, y: 0 };
-
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  window.addEventListener('mousemove', e => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
-
-  const COLORS = ['rgba(124,58,237,', 'rgba(168,85,247,', 'rgba(6,182,212,', 'rgba(192,132,252,'];
-
-  function Particle() {
-    this.reset();
-  }
-
-  Particle.prototype.reset = function() {
-    this.x  = Math.random() * W;
-    this.y  = Math.random() * H;
-    this.vx = (Math.random() - 0.5) * 0.4;
-    this.vy = (Math.random() - 0.5) * 0.4;
-    this.size = Math.random() * 2 + 0.5;
-    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
-    this.alpha = Math.random() * 0.6 + 0.1;
-    this.life  = 0;
-    this.maxLife = 300 + Math.random() * 400;
-  };
-
-  Particle.prototype.update = function() {
-    this.life++;
-    if (this.life > this.maxLife) this.reset();
-    this.x += this.vx;
-    this.y += this.vy;
-    if (this.x < 0) this.x = W;
-    if (this.x > W) this.x = 0;
-    if (this.y < 0) this.y = H;
-    if (this.y > H) this.y = 0;
-  };
-
-  Particle.prototype.draw = function() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color + this.alpha + ')';
-    ctx.fill();
-  };
-
-  /* Init particles */
-  for (let i = 0; i < 120; i++) particles.push(new Particle());
-
-  /* Grid lines */
-  function drawGrid() {
-    ctx.strokeStyle = 'rgba(124,58,237,0.04)';
-    ctx.lineWidth = 1;
-    const gap = 80;
-    for (let x = 0; x < W; x += gap) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-    }
-    for (let y = 0; y < H; y += gap) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
-  }
-
-  /* Connections */
-  function drawConnections() {
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < 120) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(124,58,237,${0.08 * (1 - dist/120)})`;
-          ctx.lineWidth = 0.6;
-          ctx.stroke();
-        }
-      }
-    }
-  }
-
-  /* Mouse glow */
-  function drawMouseGlow() {
-    const grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 200);
-    grad.addColorStop(0, 'rgba(124,58,237,0.07)');
-    grad.addColorStop(1, 'transparent');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
-  }
-
-  function loop() {
-    ctx.clearRect(0, 0, W, H);
-    drawGrid();
-    drawMouseGlow();
-    particles.forEach(p => { p.update(); p.draw(); });
-    drawConnections();
-    requestAnimationFrame(loop);
-  }
-  loop();
-})();
-
-/* ---- Scroll Reveal ---- */
-const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      observer.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.1 });
-reveals.forEach(r => observer.observe(r));
-
-/* ---- Navbar scroll effect ---- */
+/* Nav scroll */
 window.addEventListener('scroll', () => {
-  const nav = document.getElementById('navbar');
-  if (window.scrollY > 50) {
-    nav.style.padding = '12px 0';
-  } else {
-    nav.style.padding = '18px 0';
-  }
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
 });
 
-/* ---- FAQ accordion ---- */
+/* Mobile menu */
+function openMob() { document.getElementById('mobMenu').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMob() { document.getElementById('mobMenu').classList.remove('open'); document.body.style.overflow=''; }
+
+/* Scroll reveal */
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); ro.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+/* Step hover */
+document.querySelectorAll('.step-item').forEach(item => {
+  item.addEventListener('mouseenter', () => {
+    document.querySelectorAll('.step-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+/* Pricing tabs */
+function switchTab(btn, tab) {
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('plan-ios').style.display = tab === 'ios' ? 'grid' : 'none';
+  document.getElementById('plan-android').style.display = tab === 'android' ? 'grid' : 'none';
+}
+
+/* FAQ */
 document.querySelectorAll('.faq-q').forEach(q => {
   q.addEventListener('click', () => {
     const item = q.parentElement;
     const isOpen = item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
+    if(!isOpen) item.classList.add('open');
   });
 });
 
-/* ---- Mobile menu ---- */
-function openMobileMenu() {
-  document.getElementById('mobileMenu').classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-function closeMobileMenu() {
-  document.getElementById('mobileMenu').classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-/* ---- Download button ripple ---- */
-document.querySelectorAll('.btn-primary, .download-btn').forEach(btn => {
+/* Download ripple */
+document.querySelectorAll('.btn-main, .dl-btn.android').forEach(btn => {
   btn.addEventListener('click', function(e) {
-    const ripple = document.createElement('span');
+    const r = document.createElement('span');
     const rect = this.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
-    ripple.style.cssText = `
-      position:absolute; border-radius:50%; background:rgba(255,255,255,0.3);
-      width:${size}px; height:${size}px;
-      left:${e.clientX - rect.left - size/2}px;
-      top:${e.clientY - rect.top - size/2}px;
-      transform:scale(0); animation:ripple 0.6s ease-out forwards;
-      pointer-events:none;
-    `;
-    this.style.position = 'relative';
-    this.style.overflow = 'hidden';
-    this.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 700);
+    r.style.cssText = `position:absolute;border-radius:50%;background:rgba(255,255,255,0.25);width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;transform:scale(0);animation:rpl .6s ease-out forwards;pointer-events:none;`;
+    this.style.position='relative'; this.style.overflow='hidden';
+    this.appendChild(r); setTimeout(()=>r.remove(), 700);
   });
 });
+const s = document.createElement('style');
+s.textContent = '@keyframes rpl{to{transform:scale(3);opacity:0}}';
+document.head.appendChild(s);
 
-/* Ripple keyframe */
-const style = document.createElement('style');
-style.textContent = `@keyframes ripple { to { transform: scale(3); opacity: 0; } }`;
-document.head.appendChild(style);
+/* Steps responsive grid */
+if(window.innerWidth <= 600){
+  const grid = document.querySelector('.steps-row');
+  if(grid) grid.style.gridTemplateColumns = '1fr';
+}
 </script>
 </body>
 </html>
