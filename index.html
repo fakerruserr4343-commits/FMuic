@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/hero.css">
 <link rel="stylesheet" href="css/sections.css">
+<link rel="stylesheet" href="css/3d.css">
 <script>document.documentElement.classList.replace('no-js','js')</script>
 </head>
 <body>
@@ -46,6 +47,13 @@
 <div class="orb orb-c" aria-hidden="true"></div>
 <div class="noise" aria-hidden="true"></div>
 
+<!-- 3D tel-küp arka planı (sadece geniş ekran + hareket izinli) -->
+<div class="wfx" aria-hidden="true">
+  <div class="w3d c1"><div class="w3d-in"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+  <div class="w3d c2"><div class="w3d-in"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+  <div class="w3d c3"><div class="w3d-in"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+</div>
+
 <header class="nav" id="nav">
   <div class="nav-in">
     <a class="brand" href="#top" aria-label="FMiuc ana sayfa">
@@ -60,6 +68,12 @@
       <a href="#faq">SSS</a>
     </nav>
     <div class="nav-cta">
+      <div class="lang-sw" role="group" aria-label="Dil / Language">
+        <button type="button" data-lang="tr" aria-label="Türkçe">TR</button>
+        <button type="button" data-lang="en" aria-label="English">EN</button>
+        <button type="button" data-lang="ru" aria-label="Русский">RU</button>
+        <button type="button" data-lang="az" aria-label="Azərbaycanca">AZ</button>
+      </div>
       <a class="nav-wa" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc hakkında bilgi almak istiyorum." aria-label="WhatsApp destek"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg></a>
       <a class="btn btn-sm btn-primary dl-track" href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk" download="FMiuc-v1.7.apk" target="_blank" rel="noopener">⬇ İndir</a>
       <button class="burger" id="burger" aria-label="Menüyü aç/kapat" aria-expanded="false"><i></i></button>
@@ -73,6 +87,12 @@
   <a href="#pricing">Üyelik</a>
   <a href="#faq">SSS</a>
   <a class="m-dl" href="https://github.com/fakerruserr4343-commits/FMuic/raw/main/FMiuc-v1.7.apk" download="FMiuc-v1.7.apk" target="_blank" rel="noopener">⬇ APK'yı İndir</a>
+  <div class="lang-sw lang-mob" role="group" aria-label="Dil / Language">
+    <button type="button" data-lang="tr" aria-label="Türkçe">🇹🇷 TR</button>
+    <button type="button" data-lang="en" aria-label="English">🇬🇧 EN</button>
+    <button type="button" data-lang="ru" aria-label="Русский">🇷🇺 RU</button>
+    <button type="button" data-lang="az" aria-label="Azərbaycanca">🇦🇿 AZ</button>
+  </div>
 </div>
 
 <main>
@@ -326,7 +346,7 @@
       <p class="sec-desc">Plan butonuna bas — mesajın hazır olarak WhatsApp'a gitsin. Fiyat, ödeme ve aktivasyon tek sohbette.</p>
     </div>
     <div class="price-grid">
-      <div class="price-card reveal">
+      <div class="price-card tilt reveal">
         <span class="p-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-cal"/></svg></span>
         <div class="plan-name">Haftalık</div>
         <div class="plan-dur">7 gün erişim</div>
@@ -339,7 +359,7 @@
         </ul>
         <a class="price-btn" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc HAFTALIK üyelik planını satın almak istiyorum. Fiyat ve aktivasyon bilgisi paylaşabilir misiniz?"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>WhatsApp'tan Satın Al</a>
       </div>
-      <div class="price-card pop reveal" style="--d:.08s">
+      <div class="price-card tilt pop reveal" style="--d:.08s">
         <span class="price-tag">⭐ En Popüler</span>
         <span class="p-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-cal"/></svg></span>
         <div class="plan-name">Aylık</div>
@@ -353,7 +373,7 @@
         </ul>
         <a class="price-btn primary" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc AYLIK üyelik planını satın almak istiyorum. Fiyat ve aktivasyon bilgisi paylaşabilir misiniz?"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>Hemen Satın Al</a>
       </div>
-      <div class="price-card reveal" style="--d:.16s">
+      <div class="price-card tilt reveal" style="--d:.16s">
         <span class="price-tag alt">En Avantajlı</span>
         <span class="p-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-rocket"/></svg></span>
         <div class="plan-name">Yıllık</div>
@@ -367,7 +387,7 @@
         </ul>
         <a class="price-btn" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc YILLIK üyelik planını satın almak istiyorum. Fiyat ve aktivasyon bilgisi paylaşabilir misiniz?"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg>WhatsApp'tan Satın Al</a>
       </div>
-      <div class="price-card vio reveal" style="--d:.24s">
+      <div class="price-card tilt vio reveal" style="--d:.24s">
         <span class="p-ico"><svg class="ic" viewBox="0 0 24 24"><use href="#i-inf"/></svg></span>
         <div class="plan-name">Sonsuz</div>
         <div class="plan-dur">Süresiz erişim</div>
@@ -424,6 +444,7 @@
 
 <!-- SON ÇAĞRI -->
 <section class="cta-final">
+  <canvas class="globe" id="globe" aria-hidden="true"></canvas>
   <div class="wrap">
     <h2 class="cta-title reveal">İki dakika sonra,<br><span class="grad">istediğin yerde olabilirsin.</span></h2>
     <p class="cta-sub reveal" style="--d:.08s">İndir, kur, konumunu seç. Gerisi bir dokunuş.</p>
@@ -471,6 +492,7 @@
 
 <a class="wa-fab" href="https://wa.me/994708502510" target="_blank" rel="noopener" data-wa="Merhaba! FMiuc hakkında bilgi almak istiyorum." aria-label="WhatsApp destek"><svg class="ic-f" viewBox="0 0 24 24"><use href="#i-wa"/></svg></a>
 <div class="toast" id="toast" role="status"><i></i><span></span></div>
+<script src="js/i18n.js" defer></script>
 <script src="js/main.js" defer></script>
 </body>
 </html>

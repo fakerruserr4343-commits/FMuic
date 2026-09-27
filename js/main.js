@@ -9,12 +9,18 @@ function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
 var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-/* ---------- WhatsApp: hazır mesajlı linkler ---------- */
+/* ---------- yardımcılar ---------- */
 var WA_NUM = '994708502510';
-$$('a[data-wa]').forEach(function (a) {
-  var msg = a.getAttribute('data-wa') || 'Merhaba! FMiuc hakkında bilgi almak istiyorum.';
-  a.href = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg);
-});
+function TS(k) { return (window.FM_STRINGS && window.FM_STRINGS[k]) || ''; }
+
+/* ---------- WhatsApp: hazır mesajlı linkler ---------- */
+function bindWA() {
+  $$('a[data-wa]').forEach(function (a) {
+    var msg = a.getAttribute('data-wa') || TS('wa_hello') || 'Merhaba! FMiuc hakkında bilgi almak istiyorum.';
+    a.href = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg);
+  });
+}
+bindWA();
 
 /* ---------- telefon saati ---------- */
 var clockEl = $('#pClock');
@@ -60,6 +66,16 @@ var io = new IntersectionObserver(function (entries) {
 $$('.reveal').forEach(function (el) { io.observe(el); });
 
 /* ---------- sayaçlar ---------- */
+var COUNTED = [];
+function recount() {
+  COUNTED.forEach(function (c) {
+    var loc = TS('loc') || 'tr-TR';
+    c.el.textContent = c.dec
+      ? (c.end / 10).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+      : Math.round(c.end).toLocaleString(loc);
+    c.el.textContent += c.suffix;
+  });
+}
 var cio = new IntersectionObserver(function (entries) {
   entries.forEach(function (e) {
     if (!e.isIntersecting) return;
@@ -68,10 +84,12 @@ var cio = new IntersectionObserver(function (entries) {
     var end = parseFloat(el.getAttribute('data-count'));
     var dec = el.getAttribute('data-dec') === '1';
     var suffix = el.getAttribute('data-suffix') || '';
+    COUNTED.push({ el: el, end: end, dec: dec, suffix: suffix });
     function setVal(v) {
+      var loc = TS('loc') || 'tr-TR';
       el.textContent = dec
-        ? (v / 10).toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-        : Math.round(v).toLocaleString('tr-TR');
+        ? (v / 10).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+        : Math.round(v).toLocaleString(loc);
     }
     if (reduced) { setVal(end); el.textContent += suffix; return; }
     var t0 = performance.now(), dur = 1500;
@@ -130,7 +148,7 @@ if (hasHover && !reduced) {
 var cv = $('#fx');
 if (cv && !reduced) {
   var ctx = cv.getContext('2d');
-  var W, H, pts = [], raf = null, mx = -9e3, my = -9e3, rsz = null;
+  var W, H, pts = [], raf = null, mx = -9e3, my = -9e3, rsz = null, star = null, starT = performance.now();
   var GREEN = '41,243,131', CYAN = '25,229,255';
   function size() {
     var DPR = Math.min(window.devicePixelRatio || 1, 1.8);
@@ -172,6 +190,21 @@ if (cv && !reduced) {
         }
       }
     }
+    if (!star && performance.now() - starT > 6500 + Math.random() * 5000) {
+      star = { x: W * (0.1 + Math.random() * 0.7), y: H * Math.random() * 0.35, vx: 4 + Math.random() * 3, vy: 1.4 + Math.random() * 1.4, l: 0 };
+      starT = performance.now();
+    }
+    if (star) {
+      star.x += star.vx; star.y += star.vy; star.l += 0.016;
+      var al = star.l < 0.25 ? star.l / 0.25 : Math.max(0, 1 - star.l);
+      ctx.strokeStyle = 'rgba(200,255,230,' + (al * 0.8).toFixed(3) + ')';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(star.x, star.y);
+      ctx.lineTo(star.x - star.vx * 9, star.y - star.vy * 9);
+      ctx.stroke();
+      if (star.l >= 1 || star.x > W + 80) star = null;
+    }
     raf = requestAnimationFrame(draw);
   }
   size();
@@ -182,6 +215,109 @@ if (cv && !reduced) {
     else if (!raf) raf = requestAnimationFrame(draw);
   });
   raf = requestAnimationFrame(draw);
+}
+
+/* ---------- dönen 3D tel-küre (son çağrı bölümü) ---------- */
+var gcv = $('#globe');
+if (gcv && !reduced) {
+  var gctx = gcv.getContext('2d');
+  var GW = 300, GH = 300, GR = 120, gRaf = null, gVis = false, gT = 0, fr = 0, gRsz = null;
+  var TILT = 0.42, SPIN = 0.0034;
+  var SEG = window.innerWidth < 700 ? 34 : 50;
+  var RINGS = [];
+  (function () {
+    var la = [-60, -30, 0, 30, 60];
+    for (var i = 0; i < la.length; i++) {
+      var pts = [], c = Math.cos(la[i] * Math.PI / 180), s = Math.sin(la[i] * Math.PI / 180);
+      for (var j = 0; j <= SEG; j++) {
+        var t = j / SEG * Math.PI * 2;
+        pts.push([c * Math.cos(t), c * Math.sin(t), s]);
+      }
+      RINGS.push(pts);
+    }
+    for (var m = 0; m < 6; m++) {
+      var pts2 = [], L = m / 6 * Math.PI;
+      for (var j2 = 0; j2 <= SEG; j2++) {
+        var t2 = j2 / SEG * Math.PI * 2;
+        pts2.push([Math.cos(t2) * Math.cos(L), Math.cos(t2) * Math.sin(L), Math.sin(t2)]);
+      }
+      RINGS.push(pts2);
+    }
+  })();
+  function gsize() {
+    var r = gcv.getBoundingClientRect();
+    var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    GW = Math.max(200, r.width); GH = Math.max(200, r.height);
+    gcv.width = GW * DPR; gcv.height = GH * DPR;
+    gctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    GR = Math.min(GW, GH) / 2 - Math.min(GW, GH) * 0.12;
+  }
+  function gdraw() {
+    fr++; gT += SPIN;
+    gctx.clearRect(0, 0, GW, GH);
+    var cx = GW / 2, cy = GH / 2;
+    var ca = Math.cos(gT), sa = Math.sin(gT), ct = Math.cos(TILT), st = Math.sin(TILT);
+    var fP = [], bP = [];
+    function proj(p) {
+      var x = p[0] * ca + p[2] * sa;
+      var z = -p[0] * sa + p[2] * ca;
+      var y = p[1] * ct - z * st;
+      return [cx + x * GR, cy - y * GR, p[1] * st + z * ct];
+    }
+    for (var r = 0; r < RINGS.length; r++) {
+      var pts = RINGS[r], prev = null, q2;
+      for (var j = 0; j <= SEG; j++) {
+        q2 = proj(pts[j]);
+        if (prev) {
+          if (q2[2] > 0 && prev[2] > 0) { fP.push(prev[0], prev[1], q2[0], q2[1]); }
+          else { bP.push(prev[0], prev[1], q2[0], q2[1]); }
+        }
+        prev = q2;
+      }
+    }
+    function runs(list, style) {
+      if (!list.length) return;
+      gctx.strokeStyle = style; gctx.lineWidth = 1;
+      gctx.beginPath();
+      for (var i = 0; i < list.length; i += 4) { gctx.moveTo(list[i], list[i + 1]); gctx.lineTo(list[i + 2], list[i + 3]); }
+      gctx.stroke();
+    }
+    runs(bP, 'rgba(148,163,255,.10)');
+    runs(fP, 'rgba(41,243,131,.38)');
+    var pin = proj([Math.cos(.7162) * Math.cos(.5062), Math.cos(.7162) * Math.sin(.5062), Math.sin(.7162)]);
+    if (pin[2] > 0) {
+      var ph = (fr % 96) / 96;
+      gctx.strokeStyle = 'rgba(41,243,131,' + (0.55 * (1 - ph)).toFixed(3) + ')';
+      gctx.lineWidth = 1.2;
+      gctx.beginPath(); gctx.arc(pin[0], pin[1], 4 + ph * 22, 0, 6.2832); gctx.stroke();
+      gctx.fillStyle = 'rgba(41,243,131,.95)';
+      gctx.beginPath(); gctx.arc(pin[0], pin[1], 3, 0, 6.2832); gctx.fill();
+    } else {
+      gctx.fillStyle = 'rgba(41,243,131,.35)';
+      gctx.beginPath(); gctx.arc(pin[0], pin[1], 2, 0, 6.2832); gctx.fill();
+    }
+    var or1 = GR * 1.28, or2 = GR * 0.4, rot = -0.5;
+    gctx.strokeStyle = 'rgba(25,229,255,.16)'; gctx.lineWidth = 1;
+    gctx.beginPath(); gctx.ellipse(cx, cy, or1, or2, rot, 0, 6.2832); gctx.stroke();
+    var sA = fr * 0.02;
+    gctx.strokeStyle = 'rgba(25,229,255,.35)';
+    gctx.beginPath(); gctx.ellipse(cx, cy, or1, or2, rot, sA - 0.55, sA); gctx.stroke();
+    var ex = Math.cos(sA) * or1, ey = Math.sin(sA) * or2;
+    var sx = cx + ex * Math.cos(rot) - ey * Math.sin(rot);
+    var sy = cy + ex * Math.sin(rot) + ey * Math.cos(rot);
+    gctx.fillStyle = 'rgba(25,229,255,.9)';
+    gctx.beginPath(); gctx.arc(sx, sy, 2.2, 0, 6.2832); gctx.fill();
+    gRaf = requestAnimationFrame(gdraw);
+  }
+  function gStart() { if (!gRaf && gVis && !document.hidden) gRaf = requestAnimationFrame(gdraw); }
+  function gStop() { if (gRaf) { cancelAnimationFrame(gRaf); gRaf = null; } }
+  gsize();
+  var gio = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { gVis = e.isIntersecting; if (gVis) gStart(); else gStop(); });
+  }, { threshold: 0.02 });
+  gio.observe(gcv);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) gStop(); else gStart(); });
+  window.addEventListener('resize', function () { clearTimeout(gRsz); gRsz = setTimeout(gsize, 180); }, { passive: true });
 }
 
 /* ---------- SSS ---------- */
@@ -208,28 +344,32 @@ function toast(msg) {
 }
 
 /* ---------- canlı demo haritası ---------- */
+var refreshDemo = null;
 var dmap = $('#demoMap');
 if (dmap) {
   var dpin = $('#demoPin'), dpulse = $('#demoPulse'),
       dcity = $('#demoCity'), dcoord = $('#demoCoords');
   var CITIES = {
-    tokyo:   { n: 'Shibuya, Tokyo',      la: 35.6595, lo: 139.7005, x: 72, y: 34 },
-    paris:   { n: 'Le Marais, Paris',   la: 48.8566, lo: 2.3522,   x: 38, y: 56 },
-    newyork: { n: 'Brooklyn, New York', la: 40.6782, lo: -73.9442,  x: 26, y: 30 },
-    ist:     { n: 'Beşiktaş, İstanbul', la: 41.043,  lo: 29.005,    x: 58, y: 66 },
-    dubai:   { n: 'Marina, Dubai',      la: 25.0802, lo: 55.1403,  x: 80, y: 72 }
+    tokyo:   { la: 35.6595, lo: 139.7005, x: 72, y: 34 },
+    paris:   { la: 48.8566, lo: 2.3522,   x: 38, y: 56 },
+    newyork: { la: 40.6782, lo: -73.9442, x: 26, y: 30 },
+    ist:     { la: 41.043,  lo: 29.005,   x: 58, y: 66 },
+    dubai:   { la: 25.0802, lo: 55.1403,  x: 80, y: 72 }
   };
-  var cur = CITIES.tokyo;
+  var curKey = 'tokyo', cur = CITIES.tokyo;
+  function cityN(k) { var c = TS('cities'); return (c && c[k]) || ''; }
   function fmt(la, lo) {
-    return Math.abs(la).toFixed(4) + '\u00B0 ' + (la >= 0 ? 'K' : 'G') + ', ' +
-           Math.abs(lo).toFixed(4) + '\u00B0 ' + (lo >= 0 ? 'D' : 'B');
+    var N = TS('nsew') || ['K', 'G', 'D', 'B'];
+    return Math.abs(la).toFixed(4) + '\u00B0 ' + (la >= 0 ? N[0] : N[1]) + ', ' +
+           Math.abs(lo).toFixed(4) + '\u00B0 ' + (lo >= 0 ? N[2] : N[3]);
   }
   function setPin(x, y, la, lo, name) {
     dpin.style.left = x + '%'; dpin.style.top = y + '%';
     dpulse.style.left = x + '%'; dpulse.style.top = y + '%';
     if (name) dcity.textContent = name;
     dcoord.textContent = fmt(la, lo);
-    toast('\uD83D\uDCCD Konum g\u00FCncellendi \u2014 ' + (name || cur.n).split(',')[0]);
+    var base = (name || cityN(curKey) || '').split(',')[0];
+    toast((TS('pin') || '\uD83D\uDCCD').replace('{c}', base));
   }
   dmap.addEventListener('click', function (e) {
     var r = dmap.getBoundingClientRect();
@@ -241,23 +381,36 @@ if (dmap) {
   });
   $$('.city-chip').forEach(function (ch) {
     ch.addEventListener('click', function () {
-      var c = CITIES[ch.getAttribute('data-city')];
+      var k = ch.getAttribute('data-city'), c = CITIES[k];
       if (!c) return;
-      cur = c;
-      setPin(c.x, c.y, c.la, c.lo, c.n);
+      curKey = k; cur = c;
+      setPin(c.x, c.y, c.la, c.lo, cityN(k));
     });
   });
+  refreshDemo = function () {
+    dcity.textContent = cityN(curKey);
+    dcoord.textContent = fmt(cur.la, cur.lo);
+  };
 }
 
 /* ---------- indirme geri bildirimi ---------- */
 $$('.dl-track').forEach(function (a) {
   a.addEventListener('click', function () {
-    toast('\u2B07 \u0130ndirme ba\u015Flad\u0131 \u2014 kurulumda "Bilinmeyen kaynaklar" iznine izin ver');
+    toast(TS('dlToast'));
   });
 });
 
 /* ---------- yıl ---------- */
-var yr = $('#year');
-if (yr) yr.textContent = new Date().getFullYear();
+function setYear() { var yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear(); }
+setYear();
+
+/* ---------- dil değişimi ---------- */
+window.addEventListener('fmiuc:lang', function () {
+  bindWA();
+  recount();
+  setYear();
+  if (refreshDemo) refreshDemo();
+  toast('\uD83C\uDF10 ' + (TS('langName') || ''));
+});
 
 })();
